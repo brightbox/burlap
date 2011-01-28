@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
   s.name        = "brappa"
   s.version     = Brappa::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
+  s.authors     = ["Caius Durling"]
+  s.email       = ["hello@brightbox.co.uk"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Wrapper for burlap APIs}
+  s.description = %q{Translates responses from Burlap APIs to ruby, and generates requests to send back.}
 
   s.rubyforge_project = "brappa"
 
