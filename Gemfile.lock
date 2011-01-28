@@ -1,0 +1,17 @@
+PATH
+  remote: .
+  specs:
+    brappa (0.0.1)
+      nokogiri (~> 1.4.4)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    nokogiri (1.4.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  brappa!
+  nokogiri (~> 1.4.4)
