@@ -1,3 +1,10 @@
 module Brappa
-  # Your code goes here...
+
+  def self.parse_xml io_handle
+    listener = Listener.new
+    parser = Nokogiri::XML::SAX::Parser.new(listener)
+    parser.parse(io_handle)
+    listener.result
+  end
+
 end
