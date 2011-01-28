@@ -114,6 +114,7 @@ module Brappa
     end
   end
 
+  require "date"
   class Date < BaseTag
     tag_name "date"
 
