@@ -77,6 +77,7 @@ module Burlap
       handle_mapping "java.sql.Timestamp"
 
       def to_ruby
+        # This is already parsed as a Time object
         contents["value"]
       end
     end
@@ -118,12 +119,12 @@ module Burlap
     end
   end
 
-  require "date"
+  require "time"
   class Date < BaseTag
     tag_name "date"
 
     def to_ruby
-      ::Date.parse(text) if text
+      ::Time.parse(text)  if text
     end
   end
 
