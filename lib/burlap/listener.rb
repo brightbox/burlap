@@ -1,6 +1,6 @@
 require "nokogiri"
 
-module Brappa
+module Burlap
 
   class Listener < Nokogiri::XML::SAX::Document
 

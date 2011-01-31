@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    brappa (0.0.1)
+    burlap (0.0.1)
       nokogiri (~> 1.4.4)
 
 GEM
@@ -13,5 +13,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  brappa!
+  burlap!
   nokogiri (~> 1.4.4)

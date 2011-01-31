@@ -1,4 +1,4 @@
-module Brappa
+module Burlap
 
   class BaseTag
     def self.mappings
@@ -39,7 +39,7 @@ module Brappa
     attr_accessor :type, :contents
 
     def self.mappers
-      @@mappers ||= {}
+      @@mappers ||= Hash.new
     end
 
     def self.handle_mapping name
