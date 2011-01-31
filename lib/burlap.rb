@@ -7,8 +7,8 @@ module Burlap
     listener.result
   end
 
-  def self.dump object
-    Generator.new(object).dump
+  def self.dump data
+    Generator.new(data).dump
   end
 
 end

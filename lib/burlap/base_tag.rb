@@ -35,6 +35,13 @@ module Burlap
   class Object
     attr_accessor :contents, :type
 
+    def initialize opts={}
+      opts.each do |key, value|
+        setter = :"#{key}="
+        send(setter, value) if respond_to?(setter)
+      end
+    end
+
     def to_ruby
       self
     end
