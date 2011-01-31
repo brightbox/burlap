@@ -8,7 +8,7 @@ module Burlap
   end
 
   def self.dump object
-    raise RuntimeError, "to be implemented"
+    Generator.new(object).dump
   end
 
 end
@@ -16,3 +16,4 @@ end
 # burlap/version already got included by gemspec
 require "burlap/listener"
 require "burlap/base_tag"
+require "burlap/generator"
