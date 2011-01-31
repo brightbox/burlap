@@ -104,7 +104,7 @@ module Burlap
 
   # Length is an integer as well
   class Int < BaseTag
-    tag_name "int", "length"
+    tag_name "int", "length", "ref"
 
     def to_ruby
       text.to_i
@@ -133,8 +133,52 @@ module Burlap
     tag_name "list"
 
     def to_ruby
-      # todo: implement
-      "<< list >>"
+      t = children.shift.to_ruby
+      length = children.shift.to_ruby
+
+      dict = {}
+
+      children.each_slice(2) do |arr|
+        key, value = arr.map(&:to_ruby)
+        dict[key] = value
+      end
+
+      obj = Burlap::Object.new
+      obj.contents = dict
+      obj.type = t
+      obj
+    end
+  end
+
+  class Error < Burlap::Object
+    attr_reader :code, :message, :detail_message, :stack_trace, :cause
+
+    def initialize opts={}
+      data = opts[:contents]
+
+      @message = data["message"]
+      @code = data["code"]
+      detail = data["detail"].contents
+      @detail_message = detail["detailMessage"]
+      @stack_trace = detail["stackTrace"]
+      @cause = detail["cause"]
+
+      @contents = nil
+    end
+  end
+
+  class Fault < BaseTag
+    tag_name "fault"
+
+    def to_ruby
+      dict = {}
+
+      children.each_slice(2) do |arr|
+        key, value = arr.map(&:to_ruby)
+        dict[key] = value
+      end
+
+      Error.new(:contents => dict)
     end
   end
 
