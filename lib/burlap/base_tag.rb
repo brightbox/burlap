@@ -31,6 +31,7 @@ module Burlap
     end
   end
 
+  # This is here to "fill in" for unknown mappings
   class Object
     attr_accessor :contents, :type
 
