@@ -31,6 +31,14 @@ module Burlap
     end
   end
 
+  class Object
+    attr_accessor :contents, :type
+
+    def to_ruby
+      self
+    end
+  end
+
   # Wraps up all child elements into a type. There are a couple
   # of native types specified, BigDecimal and Timestamp.
   class Map < BaseTag
@@ -39,15 +47,11 @@ module Burlap
     attr_accessor :type, :contents
 
     def self.mappers
-      @@mappers ||= Hash.new
+      @@mappers ||= ::Hash.new(Burlap::Object)
     end
 
     def self.handle_mapping name
       mappers[name] = self
-    end
-
-    def to_map
-      self
     end
 
     def to_ruby
@@ -62,17 +66,17 @@ module Burlap
         dict[key] = value
       end
 
-      klass = Map.mappers[t] || Map
+      klass = Map.mappers[t]
       m = klass.new
       m.contents = dict
       m.type = t
-      m.to_map
+      m.to_ruby
     end
 
     class Timestamp < Map
       handle_mapping "java.sql.Timestamp"
 
-      def to_map
+      def to_ruby
         contents["value"]
       end
     end
@@ -81,7 +85,7 @@ module Burlap
     class BigDecimal < Map
       handle_mapping "java.math.BigDecimal"
 
-      def to_map
+      def to_ruby
         ::BigDecimal.new(contents["value"])
       end
     end
