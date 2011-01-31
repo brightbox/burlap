@@ -12,3 +12,7 @@ module Burlap
   end
 
 end
+
+# burlap/version already got included by gemspec
+require "burlap/listener"
+require "burlap/base_tag"
