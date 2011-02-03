@@ -2,5 +2,4 @@ require "rubygems"
 require "bundler/setup"
 require "rspec"
 require "burlap"
-
-
+require "active_support/core_ext/hash/except"
