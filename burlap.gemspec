@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
   s.add_dependency "nokogiri", "~> 1.4.4"
   s.add_dependency "builder", "~> 2.0"
   s.add_development_dependency "rspec", "~> 2.0"
+  s.add_development_dependency "activesupport", "~> 3.0"
 end
