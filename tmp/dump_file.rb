@@ -78,6 +78,27 @@ module Burlap
     end
   end
 
+  class EmitNode
+    attr_accessor :parent, :object
+
+    def self.new *args
+      en = super
+      en.to_node
+    end
+
+    def initialize params={}
+      self.parent = params[:parent]
+      self.object = params[:object]
+    end
+
+    def to_node
+      data = object.burlap_data
+    end
+
+    def document
+      parent.document
+    end
+  end
 
   class Call
     attr_accessor :method, :arguments
@@ -87,12 +108,20 @@ module Burlap
       @arguments = params[:arguments]
     end
 
-    def to_burlap#_node
-      @actual_doc = Nokogiri::XML::Document.new
-      @doc = Nokogiri::XML::DocumentFragment.new @actual_doc
+    def burlap_data
+      [
+        {"method" => @method},
+        @arguments
+      ]
+    end
 
-      root = @doc.create_element("burlap:call")
-      @doc.add_child(root)
+    def to_burlap#_node
+      @doc = Nokogiri::XML::Document.new
+      root = Nokogiri::XML::Node.new "burlap:call", @doc
+
+      @doc.add_child root
+
+      root.add_child EmitNode.new(:parent => root, :object => self)
 
       root.add_child build_element(root, "method", @method)
 
@@ -100,7 +129,7 @@ module Burlap
         root.add_child build_element(root, arg, arg)
       end
 
-      @doc.to_s
+      root.to_xml
     end
 
 =begin
@@ -109,7 +138,7 @@ module Burlap
 
       @doc.add_child @doc.create_element("burlap:call")
 
-      
+      EmitNode.new(:parent => @doc, :)
 
     end
 =end
@@ -120,7 +149,7 @@ module Burlap
       end
 
       if obj.respond_to?(:to_xml_node)
-        obj.to_xml_node @doc
+        obj.to_xml_node parent.document
       else
         @doc.create_element(name, obj.to_s)
       end
