@@ -1,3 +1,8 @@
+# burlap/version already got included by gemspec
+require "burlap/listener"
+require "burlap/base_tag"
+require "burlap/call"
+
 module Burlap
 
   def self.parse io_handle
@@ -7,13 +12,4 @@ module Burlap
     listener.result
   end
 
-  def self.dump data
-    Generator.new(data).dump
-  end
-
 end
-
-# burlap/version already got included by gemspec
-require "burlap/listener"
-require "burlap/base_tag"
-require "burlap/generator"
