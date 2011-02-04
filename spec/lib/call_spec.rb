@@ -34,7 +34,7 @@ describe Burlap::Call do
     after(:all)  { Timecop.return }
     it "should have a burlap:call root" do
       @response.should =~ /\A<burlap:call>/
-      @reponse.should =~ %r{</burlap:call>\z}
+      @response.should =~ %r{</burlap:call>\z}
     end
     it "should have a method element" do
       @response.should =~ %r{<method>updateUser</method>}
@@ -43,7 +43,7 @@ describe Burlap::Call do
       @response.should =~ %r{<string>one</string>}
     end
     it "should have an int argument element" do
-      @response.should =~ %r{<int>one</int>}
+      @response.should =~ %r{<int>2</int>}
     end
     it "should have a double argument element" do
       @response.should =~ %r{<double>3.0</double>}
@@ -55,7 +55,7 @@ describe Burlap::Call do
       @response.should =~ %r{<boolean>1</boolean>}
     end
     it "should have a date argument element" do
-      @response.should =~ %r{<date>#{Time.now.iso8601(3)}</date>}
+      @response.should =~ %r{<date>#{Regexp.escape(Time.now.iso8601(3))}</date>}
     end
     describe "headers" do
       it "should generate header key/values"
