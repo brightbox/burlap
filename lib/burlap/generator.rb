@@ -19,14 +19,14 @@ module Burlap
       data.each do |e|
         raise GeneratorError, "Couldn't generate burlap for #{e.class.to_s} #{e.inspect}. Please mix in Burlap::Emit for support or implement :burlap_node" unless e.respond_to?(:burlap_node)
 
-        node = #if e.method(:burlap_node).arity > 0
+        node = if e.method(:burlap_node).arity > 0
           e.burlap_node(root_node)
-        # else
-        #   name, contents = e.burlap_node
-        #   n = Nokogiri::XML::Node.new name, root_node.document
-        #   n.content = contents
-        #   n
-        # end
+        else
+          name, contents = e.burlap_node
+          n = Nokogiri::XML::Node.new name, root_node.document
+          n.content = contents
+          n
+        end
         root_node.add_child node
       end
 
