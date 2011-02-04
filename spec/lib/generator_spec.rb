@@ -32,15 +32,15 @@ describe Burlap::Generator do
       root = @doc.css("root")
       root.should have(1).element
       root.first.should be_a_kind_of(Nokogiri::XML::Node)
-      root.first.tag_name.should == "root"
+      root.first.name.should == "root"
     end
     it "should have a nested string elements" do
       strings = @doc.css("string")
       strings.should have(2).elements
       strings.each do |str|
         str.should be_a_kind_of(Nokogiri::XML::Node)
-        str.tag_name.should == "string"
-        %w(some data).should include(str.value)
+        str.name.should == "string"
+        %w(some data).should include(str.content)
       end
     end
   end
