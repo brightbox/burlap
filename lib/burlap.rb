@@ -2,6 +2,7 @@
 require "burlap/listener"
 require "burlap/base_tag"
 require "burlap/hash"
+require "burlap/generator"
 require "burlap/call"
 
 module Burlap
