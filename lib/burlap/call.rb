@@ -12,7 +12,7 @@ module Burlap
     end
 
     def headers
-      @headers ||= []
+      @headers ||= {}
     end
 
     def arguments
@@ -20,7 +20,17 @@ module Burlap
     end
 
     def to_burlap
-      
+      Burlap::Generator.dump "burlap:call" => burlap_data
+    end
+
+    def burlap_data
+      o = []
+      # todo: handle headers
+      o << {"method" => method}
+      arguments.each do |arg|
+        o << arg
+      end
+      o
     end
 
   protected
