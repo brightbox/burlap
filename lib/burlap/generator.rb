@@ -12,9 +12,8 @@ module Burlap
     end
 
     def to_xml
-      nx = Nokogiri::XML
-      doc = nx::Document.new
-      root_node = nx::Node.new(root, doc)
+      doc = Nokogiri::XML::Document.new
+      root_node = Nokogiri::XML::Node.new(root, doc)
       doc.add_child root_node
 
       data.each do |e|
