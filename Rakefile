@@ -16,3 +16,6 @@ rescue LoadError
     fail "RSpec failed to load, this task can't run"
   end
 end
+
+desc "Alias for spec"
+task :test => :spec
