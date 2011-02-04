@@ -2,6 +2,8 @@
 require "burlap/error"
 require "burlap/hash"
 
+require "burlap/emit"
+require "burlap/core_ext"
 require "burlap/base_tag"
 
 require "burlap/generator"
