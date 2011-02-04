@@ -19,10 +19,10 @@ describe Burlap::Generator do
     end
   end
 
-  it { @generator.should respond_to(:to_xml) }
-  describe "#to_xml" do
+  it { @generator.should respond_to(:to_burlap) }
+  describe "#to_burlap" do
     before do
-      @dump = @generator.to_xml
+      @dump = @generator.to_burlap
       @doc = Nokogiri::XML(@dump)
     end
     it "should return a string" do

@@ -11,7 +11,7 @@ module Burlap
       self.data = data[root]
     end
 
-    def to_xml
+    def to_burlap
       doc = Nokogiri::XML::Document.new
       root_node = Nokogiri::XML::Node.new(root, doc)
       doc.add_child root_node
