@@ -20,7 +20,7 @@ module Burlap
     end
 
     def to_burlap
-      Burlap::Generator.new("burlap:call" => burlap_data).to_xml
+      Burlap.dump("burlap:call" => burlap_data)
     end
 
     def burlap_data
