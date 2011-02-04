@@ -1,9 +1,12 @@
 # burlap/version already got included by gemspec
-require "burlap/listener"
-require "burlap/base_tag"
+require "burlap/error"
 require "burlap/hash"
+
+require "burlap/base_tag"
+
 require "burlap/generator"
 require "burlap/call"
+require "burlap/listener"
 
 module Burlap
 

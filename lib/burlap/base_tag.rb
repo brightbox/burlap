@@ -157,7 +157,7 @@ module Burlap
     end
   end
 
-  class Error < Burlap::Object
+  class Fault < Burlap::Object
     attr_reader :code, :message, :detail_message, :stack_trace, :cause
 
     def initialize opts={}
@@ -174,7 +174,7 @@ module Burlap
     end
   end
 
-  class Fault < BaseTag
+  class FaultTag < BaseTag
     tag_name "fault"
 
     def to_ruby
@@ -185,7 +185,7 @@ module Burlap
         dict[key] = value
       end
 
-      Error.new(:contents => dict)
+      Fault.new(:contents => dict)
     end
   end
 
