@@ -20,13 +20,13 @@ module Burlap
     end
 
     def to_burlap
-      Burlap::Generator.dump "burlap:call" => burlap_data
+      Burlap::Generator.new("burlap:call" => burlap_data).to_xml
     end
 
     def burlap_data
       o = []
       # todo: handle headers
-      o << {"method" => method}
+      o << Burlap::Node.new(:name => "method", :content => method)
       arguments.each do |arg|
         o << arg
       end
