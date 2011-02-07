@@ -2,39 +2,22 @@ module Burlap
   class Generator
     GeneratorError = Class.new(Burlap::Error)
 
-    attr_reader :root, :data
+    attr_reader :obj
 
-    def initialize data
-      raise ArgumentError, "data is not a Hash" unless data.is_a?(::Hash)
-      raise ArgumentError, "data can only contain one root element" if data.keys.size > 1
-      self.root = data.keys.first
-      self.data = data[root]
+    def initialize obj
+      self.obj
     end
 
     def to_burlap
-      doc = Nokogiri::XML::Document.new
-      root_node = Nokogiri::XML::Node.new(root, doc)
-      doc.add_child root_node
-
-      data.each do |e|
-        raise GeneratorError, "Couldn't generate burlap for #{e.class.to_s} #{e.inspect}. Please mix in Burlap::Emit for support or implement :burlap_node" unless e.respond_to?(:burlap_node)
-
-        node = if e.method(:burlap_node).arity > 0
-          e.burlap_node(root_node)
-        else
-          name, contents = e.burlap_node
-          n = Nokogiri::XML::Node.new name, root_node.document
-          n.content = contents
-          n
-        end
-        root_node.add_child node
-      end
-
-      root_node.to_xml
+      if obj.respond_to?(:to_burlap)
+        obj.to_burlap
+      else
+        raise GeneratorError, "figure out how to dump #{obj.class}"
+      end.to_xml
     end
 
   protected
-    attr_writer :root, :data
+    attr_writer :obj
   end
 
 end

@@ -1,5 +1,5 @@
 class Fixnum
-  def burlap_node
-    ["int", self]
+  def to_burlap
+    Burlap::Node.new(:name => "int", :content => self)
   end
 end

@@ -1,5 +1,5 @@
 class Float
-  def burlap_node
-    ["double", self]
+  def to_burlap
+    Burlap::Node.new(:name => "double", :content => self)
   end
 end

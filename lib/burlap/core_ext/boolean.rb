@@ -1,11 +1,11 @@
 class TrueClass
-  def burlap_node
-    ["boolean", 1]
+  def to_burlap
+    Burlap::Node.new(:name => "boolean", :content => "1")
   end
 end
 
 class FalseClass
-  def burlap_node
-    ["boolean", 0]
+  def to_burlap
+    Burlap::Node.new(:name => "boolean", :content => "0")
   end
 end

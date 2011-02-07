@@ -20,8 +20,8 @@ module Burlap
     listener.result
   end
 
-  def self.dump data
-    Burlap::Generator.new(data).to_burlap
+  def self.dump obj
+    Generator.new(obj).dump
   end
 
 end

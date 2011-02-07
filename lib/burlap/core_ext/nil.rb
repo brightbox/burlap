@@ -1,5 +1,5 @@
 class NilClass
-  def burlap_node
-    ["null", ""]
+  def to_burlap
+    Burlap::Node.new(:name => "null", :content => "")
   end
 end

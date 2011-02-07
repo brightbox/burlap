@@ -1,3 +1,5 @@
 class String
-  include Burlap::Emit
+  def to_burlap
+    Burlap::Node.new(:name => "string", :content => self)
+  end
 end

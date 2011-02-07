@@ -1,7 +1,7 @@
 require "time"
 
 class Time
-  def burlap_node
-    ["date", self.iso8601(3)]
+  def to_burlap
+    Burlap::Node.new(:name => "date", :content => self.iso8601(3))
   end
 end
