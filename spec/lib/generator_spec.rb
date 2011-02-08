@@ -1,38 +1,24 @@
 require "spec/spec_helper"
 
 describe Burlap::Generator do
-  before do
-    @valid_params = {"root" => ["some", "data"]}
-    @generator = Burlap::Generator.new(@valid_params)
-  end
-
-  describe "#new" do
-    it "should require a hash" do
-      lambda {
-        Burlap::Generator.new(nil)
-      }.should raise_error(ArgumentError, "data is not a Hash")
-    end
-    it "should require only one root element" do
-      lambda {
-        Burlap::Generator.new(@valid_params.merge("second_root" => ["more", "data"]))
-      }.should raise_error(ArgumentError, "data can only contain one root element")
-    end
-  end
 
   it { @generator.should respond_to(:to_burlap) }
   describe "#to_burlap" do
-    before do
+    before :all do
+      @valid_params = {"root" => ["some", "data"]}
+      @generator = Burlap::Generator.new(@valid_params)
       @dump = @generator.to_burlap
+      puts @dump.inspect
       @doc = Nokogiri::XML(@dump)
     end
     it "should return a string" do
       @dump.should be_a_kind_of(String)
     end
     it "should have a root element" do
-      root = @doc.css("root")
+      root = @doc.css("map")
       root.should have(1).element
       root.first.should be_a_kind_of(Nokogiri::XML::Node)
-      root.first.name.should == "root"
+      root.first.name.should == "map"
     end
     it "should have a nested string elements" do
       strings = @doc.css("string")

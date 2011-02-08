@@ -1,6 +1,8 @@
+require "burlap/core_ext/array"
 require "burlap/core_ext/boolean"
 require "burlap/core_ext/fixnum"
 require "burlap/core_ext/float"
+require "burlap/core_ext/hash"
 require "burlap/core_ext/nil"
 require "burlap/core_ext/string"
 require "burlap/core_ext/time"

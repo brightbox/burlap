@@ -24,7 +24,8 @@ module Burlap
       # todo: handle headers
       burlap_data = [Burlap::Node.new(:name => "method", :content => method)]
       arguments.each do |arg|
-        burlap_data << arg.to_burlap
+        b = arg.to_burlap
+        burlap_data << b
       end
 
       Burlap::Node.new(:name => "burlap:call", :contents => burlap_data).to_burlap

@@ -34,7 +34,7 @@ module Burlap
       Burlap::Node.new(
         :name => "map",
         :contents => [type, *content]
-      ).to_xml
+      )
     end
 
   end
