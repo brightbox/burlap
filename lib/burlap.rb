@@ -1,5 +1,6 @@
 # burlap/version already got included by gemspec
 require "burlap/error"
+require "burlap/array"
 require "burlap/hash"
 
 require "burlap/node"
