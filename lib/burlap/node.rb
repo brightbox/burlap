@@ -16,7 +16,6 @@ module Burlap
       doc = Nokogiri::XML::Document.new
       root = Nokogiri::XML::Node.new(self.name, doc)
 
-      p self.value
       root.content = self.value.to_s
 
       root.to_xml
