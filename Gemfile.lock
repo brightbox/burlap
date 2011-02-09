@@ -30,9 +30,7 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (~> 3.0)
-  builder (~> 2.0)
   burlap!
-  nokogiri (~> 1.4.4)
   rake
   rspec (~> 2.0)
   timecop (= 0.3.5)
