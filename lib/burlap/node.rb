@@ -16,9 +16,13 @@ module Burlap
       doc = Nokogiri::XML::Document.new
       root = Nokogiri::XML::Node.new(self.name, doc)
 
-      root.content = self.value.to_s
+      if self.value.to_s == ""
+        root.children = self.value.to_s
+      else
+        root << self.value.to_s
+      end
 
-      root.to_xml
+      root.to_xml(:indent => 0, :indent_text => "", :save_with => Nokogiri::XML::Node::SaveOptions::AS_HTML)
     end
 
   end
