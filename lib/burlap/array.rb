@@ -1,6 +1,6 @@
 module Burlap
   class Array < ::Array
-    
+
     def to_burlap
       # <list><type>[string</type><length>1</length><string>Some</string></list>
       list_content = [
