@@ -8,7 +8,6 @@ require "burlap/emit"
 require "burlap/core_ext" # todo: make optional?
 require "burlap/base_tag"
 
-require "burlap/generator"
 require "burlap/call"
 require "burlap/listener"
 
@@ -22,7 +21,11 @@ module Burlap
   end
 
   def self.dump obj
-    Generator.new(obj).dump
+    if obj.respond_to?(:to_burlap)
+      obj.to_burlap
+    else
+      raise Error, "couldn't dump #{obj.inspect}"
+    end
   end
 
 end
