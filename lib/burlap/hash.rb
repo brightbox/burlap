@@ -1,6 +1,3 @@
-require "rubygems"
-require "nokogiri"
-
 module Burlap
   class Hash < ::Hash
     attr_writer :__type__
@@ -16,25 +13,30 @@ module Burlap
     end
 
     def __type__
-      @__type__ ||= "Hash"
+      @__type__ ||= ""
     end
 
     def to_burlap
       # Build the node for the type
-      type = Burlap::Node.new(
+      contents = [Burlap::Node.new(
         :name => "type",
-        :contents => self.__type__
-      )
+        :value => self.__type__
+      )]
 
       # Build nodes for all the content
-      content = self.map do |k,v|
-        [Burlap::Node.new(:name => "string", :contents => k), Burlap::Node.new(:name => "string", :contents => v)]
+      contents += self.map do |k,v|
+        [
+          Burlap::Node.new(:name => "string", :value => k),
+          Burlap::Node.new(:name => "string", :value => v)
+        ]
       end.flatten
+
+      content = contents.map(&:to_burlap).join("")
 
       Burlap::Node.new(
         :name => "map",
-        :contents => [type, *content]
-      )
+        :value => content
+      ).to_burlap
     end
 
   end

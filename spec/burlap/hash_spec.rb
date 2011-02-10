@@ -9,14 +9,18 @@ describe Burlap::Hash do
   it "should behave like a Hash"
 
   describe "#__type__" do
-    it "should default to Hash" do
-      Burlap::Hash.new.__type__.should == "Hash"
+    it "should default to an empty string" do
+      Burlap::Hash.new.__type__.should == ""
     end
   end
 
   it { should respond_to(:__type__=) }
 
   describe "#[]" do
+    it "should be compatible with Hash#[]" do
+      bhash = Burlap::Hash["one" => "two", "three" => "four"]
+      bhash.should == Hash["one" => "two", "three" => "four"]
+    end
     it "should accept a second string argument to set __type__ directly" do
       [{}, {:some => "options"}, {:some => "options", :__type__ => "is ignored"}].each do |h|
         bhash = Burlap::Hash[{}, "com.java.hashmap"]
@@ -34,8 +38,6 @@ describe Burlap::Hash do
     before(:all) do
       @bd = Burlap::Hash[{:value => "something"}, "org.ruby-lang.string"]
       @result = @bd.to_burlap
-      p @bd
-      p @bd.__type__
     end
     it "should return a string" do
       @result.should be_a_kind_of(String)
