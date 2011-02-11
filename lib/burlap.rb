@@ -4,7 +4,6 @@ require "burlap/array"
 require "burlap/hash"
 
 require "burlap/node"
-require "burlap/emit"
 require "burlap/core_ext" # todo: make optional?
 require "burlap/base_tag"
 
