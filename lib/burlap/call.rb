@@ -20,15 +20,12 @@ module Burlap
     end
 
     def to_burlap
-
       # todo: handle headers
-      burlap_data = [Burlap::Node.new(:name => "method", :content => method)]
-      arguments.each do |arg|
-        b = arg.to_burlap
-        burlap_data << b
+      contents = [Burlap::Node.new(:name => "method", :value => method).to_burlap]
+      contents += arguments.map do |arg|
+        arg.to_burlap
       end
-
-      Burlap::Node.new(:name => "burlap:call", :contents => burlap_data).to_burlap
+      Burlap::Node.new(:name => "burlap:call", :value => contents.join("")).to_burlap
     end
 
   protected
