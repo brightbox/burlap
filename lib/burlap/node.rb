@@ -22,8 +22,12 @@ module Burlap
         root << self.value.to_s
       end
 
-      root.to_xml(:indent => 0, :indent_text => "", :save_with => Nokogiri::XML::Node::SaveOptions::AS_HTML)
+      root.to_xml(nokogiri_xml_options)
     end
 
+  protected
+    def nokogiri_xml_options
+      {:indent => 0, :indent_text => "", :save_with => Nokogiri::XML::Node::SaveOptions::AS_HTML}
+    end
   end
 end
