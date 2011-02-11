@@ -35,11 +35,5 @@ describe Burlap::Array do
       obj.content.should == "my stuff here"
     end
 
-  protected
-    def element_exists_with opts={}
-      elements = @doc.css(opts[:selector])
-      elements.should have(opts[:count]).elements
-      elements
-    end
   end
 end

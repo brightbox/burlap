@@ -6,15 +6,14 @@ describe Burlap::Hash do
     Burlap::Hash.ancestors.should include(Hash)
   end
 
-  it "should behave like a Hash"
+  it { should respond_to(:__type__) }
+  it { should respond_to(:__type__=) }
 
   describe "#__type__" do
     it "should default to an empty string" do
       Burlap::Hash.new.__type__.should == ""
     end
   end
-
-  it { should respond_to(:__type__=) }
 
   describe "#[]" do
     it "should be compatible with Hash#[]" do

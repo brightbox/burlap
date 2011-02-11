@@ -31,22 +31,6 @@ module Burlap
     end
   end
 
-  # This is here to "fill in" for unknown mappings
-  class Object
-    attr_accessor :contents, :type
-
-    def initialize opts={}
-      opts.each do |key, value|
-        setter = :"#{key}="
-        send(setter, value) if respond_to?(setter)
-      end
-    end
-
-    def to_ruby
-      self
-    end
-  end
-
   # Wraps up all child elements into a type. There are a couple
   # of native types specified, BigDecimal and Timestamp.
   class Map < BaseTag
@@ -54,13 +38,13 @@ module Burlap
 
     attr_accessor :type, :contents
 
-    def self.mappers
-      @@mappers ||= ::Hash.new(Burlap::Object)
-    end
+    # def self.mappers
+    #   @@mappers ||= ::Hash.new(Burlap::Object)
+    # end
 
-    def self.handle_mapping name
-      mappers[name] = self
-    end
+    # def self.handle_mapping name
+    #   mappers[name] = self
+    # end
 
     def to_ruby
       # Pop the first element off
@@ -74,30 +58,31 @@ module Burlap
         dict[key] = value
       end
 
-      klass = Map.mappers[t]
-      m = klass.new
-      m.contents = dict
-      m.type = t
-      m.to_ruby
+      # klass = Map.mappers[t]
+      # m = klass.new
+      # m.contents = dict
+      # m.type = t
+      # m.to_ruby
+      Burlap::Hash[dict, t]
     end
 
-    class Timestamp < Map
-      handle_mapping "java.sql.Timestamp"
-
-      def to_ruby
-        # This is already parsed as a Time object
-        contents["value"]
-      end
-    end
-
-    require "bigdecimal"
-    class BigDecimal < Map
-      handle_mapping "java.math.BigDecimal"
-
-      def to_ruby
-        ::BigDecimal.new(contents["value"])
-      end
-    end
+    # class Timestamp < Map
+    #   handle_mapping "java.sql.Timestamp"
+    # 
+    #   def to_ruby
+    #     # This is already parsed as a Time object
+    #     contents["value"]
+    #   end
+    # end
+    # 
+    # require "bigdecimal"
+    # class BigDecimal < Map
+    #   handle_mapping "java.math.BigDecimal"
+    # 
+    #   def to_ruby
+    #     ::BigDecimal.new(contents["value"])
+    #   end
+    # end
   end
 
   # Type is also just a string
@@ -140,6 +125,8 @@ module Burlap
     tag_name "list"
 
     def to_ruby
+      # We don't actually care about the type or length of the
+      # array in ruby, but we shift it out the way anyway.
       t = children.shift.to_ruby
       length = children.shift.to_ruby
 
@@ -150,14 +137,13 @@ module Burlap
         dict[key] = value
       end
 
-      obj = Burlap::Object.new
-      obj.contents = dict
-      obj.type = t
-      obj
+      p dict
+
+      Burlap::Array[*dict]
     end
   end
 
-  class Fault < Burlap::Object
+  class Fault
     attr_reader :code, :message, :detail_message, :stack_trace, :cause
 
     def initialize opts={}
