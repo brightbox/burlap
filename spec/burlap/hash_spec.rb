@@ -2,8 +2,8 @@ require "spec_helper"
 
 describe Burlap::Hash do
 
-  it "should inherit from Hash" do
-    Burlap::Hash.ancestors.should include(Hash)
+  it "should inherit from ordered hash" do
+    Burlap::Hash.ancestors.should include(ActiveSupport::OrderedHash)
   end
 
   it { should respond_to(:__type__) }
@@ -18,13 +18,33 @@ describe Burlap::Hash do
   describe "#[]" do
     it "should be compatible with Hash#[]" do
       bhash = Burlap::Hash["one" => "two", "three" => "four"]
-      bhash.should == Hash["one" => "two", "three" => "four"]
+
+      bhash.keys.should =~ ["one", "three"]
+      bhash.values.should =~ ["two", "four"]
     end
     it "should accept a second string argument to set __type__ directly" do
       [{}, {:some => "options"}, {:some => "options", :__type__ => "is ignored"}].each do |h|
         bhash = Burlap::Hash[{}, "com.java.hashmap"]
         bhash.__type__.should == "com.java.hashmap"
       end
+    end
+  end
+
+  describe "#inspect" do
+    before :all do
+      @h = Burlap::Hash[{"one" => "two", :three => 4}, "Fred"]
+    end
+    it "should not contain OrderedHash" do
+      @h.inspect.should_not include("OrderedHash")
+    end
+    it "should start with Burlap::Hash" do
+      @h.inspect.should =~ /#<Burlap::Hash/
+    end
+    it "should contain the hash, inspected" do
+      @h.inspect.should include(%({"one"=>"two", :three=>4}))
+    end
+    it "should contain the type, inspected" do
+      @h.inspect.should include("__type__=Fred")
     end
   end
 
