@@ -49,28 +49,86 @@ describe Burlap::Hash do
   end
 
   describe "#to_burlap" do
-    # <map>
-    #   <type>org.ruby-lang.string</type>
-    #   <string>value</string>
-    #   <string>something</string>
-    # </map>
-    before(:all) do
-      @bd = Burlap::Hash[{:value => "something"}, "org.ruby-lang.string"]
-      @result = @bd.to_burlap
+    describe "wrapping a string" do
+      # <map>
+      #   <type>org.ruby-lang.string</type>
+      #   <string>value</string>
+      #   <string>something</string>
+      # </map>
+      before(:all) do
+        @bd = Burlap::Hash[{:value => "something"}, "org.ruby-lang.string"]
+        @result = @bd.to_burlap
+      end
+      it "should return a string" do
+        @result.should be_a_kind_of(String)
+      end
+      it "should have a map root" do
+        @result.should =~ /^<map>/
+        @result.should =~ %r{</map>$}
+      end
+      it "should have a nested type node" do
+        @result.should =~ %r{<type>org.ruby-lang.string</type>}
+      end
+      it "should have nested value nodes" do
+        @result.should =~ %r{<string>value</string>}
+        @result.should =~ %r{<string>something</string>}
+      end
     end
-    it "should return a string" do
-      @result.should be_a_kind_of(String)
+    describe "wrapping multiple keys" do
+      before :all do
+        @bd = Burlap::Hash[[["name", "caius durling"], ["age", 101]], "burlap.user"]
+        @result = @bd.to_burlap
+        @doc = Nokogiri::XML(@result)
+      end
+      it "should return a string" do
+        @result.should be_a_kind_of(String)
+      end
+      it "should have a map root" do
+        element_exists_with :selector => "map", :count => 1
+      end
+      it "should have a type element" do
+        @result.should =~ %r{<type>burlap.user</type>}
+      end
+      it "should have a name keypair" do
+        @result.should =~ %r{<string>name</string><string>caius durling</string>}
+      end
+      it "should have an age keypair" do
+        @result.should =~ %r{<string>age</string><int>101</int>}
+      end
     end
-    it "should have a map root" do
-      @result.should =~ /^<map>/
-      @result.should =~ %r{</map>$}
-    end
-    it "should have a nested type node" do
-      @result.should =~ %r{<type>org.ruby-lang.string</type>}
-    end
-    it "should have nested value nodes" do
-      @result.should =~ %r{<string>value</string>}
-      @result.should =~ %r{<string>something</string>}
+    describe "wrapping nested keys" do
+      before do
+        # Effectively {"people" => [{"name" => "caius durling", "age" => 101}]}
+        @bd = Burlap::Hash[[
+          ["people", {"name" => "caius durling", "age" => 101}]
+        ], "burlap-peoples"]
+        @result = @bd.to_burlap
+        # <map><type></type><string>people</string><map><type></type><string>name</string><string>caius durling</string><string>age</string><int>101</int></map></map>
+      end
+      it "should return a string" do
+        @result.should be_a_kind_of(String)
+      end
+      it "should be generated properly, including nested elements" do
+        xml_string = <<-EOF
+          <map>
+            <type>burlap-peoples</type>
+
+            <string>people</string>
+            <map>
+              <type></type>
+
+              <string>name</string>
+              <string>caius durling</string>
+
+              <string>age</string>
+              <int>101</int>
+            </map>
+
+          </map>
+        EOF
+        xml_string.gsub!(/(^|\n)\s*/m, "")
+        @result.should == xml_string
+      end
     end
   end
 
