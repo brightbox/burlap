@@ -8,8 +8,6 @@ class Object
       [key, value]
     end.sort_by {|e| e.first }
 
-    p vars
-
     Burlap::Hash[vars, self.class.to_s].to_burlap
   end
 end

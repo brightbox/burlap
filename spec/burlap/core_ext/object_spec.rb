@@ -7,7 +7,7 @@ describe Object do
     end
     it "should invoke Burlap::Hash with type of classname" do
       hash = mock(Burlap::Hash)
-      Burlap::Hash.should_receive(:[]).with({}, "Object").and_return(hash)
+      Burlap::Hash.should_receive(:[]).with([], "Object").and_return(hash)
       hash.should_receive(:to_burlap).and_return("<my>xml</my>")
 
       Object.new.to_burlap.should == "<my>xml</my>"
@@ -45,7 +45,8 @@ describe Object do
             <string>something here</string>
           </map>
         EOF
-        xml_string.gsub!(/\s/m, "")
+        # Strip newlines & whitespace between tags - burlap is one string
+        xml_string.gsub!(/(^|\n)\s*/m, "")
         @result.should == xml_string
       end
     end
