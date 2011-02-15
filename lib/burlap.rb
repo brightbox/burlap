@@ -12,6 +12,8 @@ require "burlap/listener"
 
 module Burlap
 
+  # Turns a burlap string read from `io_handle` into native
+  # ruby objects.
   def self.parse io_handle
     listener = Listener.new
     parser = Nokogiri::XML::SAX::Parser.new(listener)
@@ -19,6 +21,7 @@ module Burlap
     listener.result
   end
 
+  # Turns `obj` into a burlap XML representation
   def self.dump obj
     if obj.respond_to?(:to_burlap)
       obj.to_burlap
