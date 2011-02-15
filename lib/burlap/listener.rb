@@ -1,9 +1,7 @@
 require "nokogiri"
 
 module Burlap
-
   class Listener < Nokogiri::XML::SAX::Document
-
     attr_accessor :result
 
     def initialize
@@ -12,13 +10,11 @@ module Burlap
     end
 
     def start_element name, attrs=[]
-      klass = BaseTag::mappings[name]
-      raise "Missing class for #{name.inspect}" unless klass
-      @open.push klass.new
+      @open.push BaseTag.new(:name => name)
     end
 
     def characters contents
-      @open.last.text = contents if @open.last
+      @open.last.value += contents if @open.last
     end
 
     def end_element name
