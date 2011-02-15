@@ -20,10 +20,12 @@ end
 desc "Alias for spec"
 task :test => :spec
 
+begin
+  require "yard"
 
-require "rake/rdoctask"
-Rake::RDocTask.new(:doc) do |rd|
-  rd.main = "README.md"
-  rd.rdoc_dir = "doc"
-  rd.rdoc_files.include("README.md", "lib/**/*.rb")
+  YARD::Rake::YardocTask.new :doc do |yard|
+    yard.files = Dir.glob("lib/**/*.rb")
+  end
+rescue LoadError
+  puts "failed to load yard"
 end
