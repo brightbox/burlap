@@ -5,7 +5,7 @@ YAML.add_builtin_type("omap") do |type, val|
 end
 
 # OrderedHash is namespaced to prevent conflicts with other implementations
-module ActiveSupport
+module ActiveSupport #:nodoc:
   class OrderedHash < ::Hash #:nodoc:
     def to_yaml_type
       "!tag:yaml.org,2002:omap"

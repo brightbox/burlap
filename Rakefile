@@ -13,9 +13,17 @@ rescue LoadError
   # rspec not loaded, tasks not available
   desc "[RSpec failed to load] Run all examples"
   task :spec do
-    fail "RSpec failed to load, this task can't run"
+    fail "RSpec failed to load, this task can't be run"
   end
 end
 
 desc "Alias for spec"
 task :test => :spec
+
+
+require "rake/rdoctask"
+Rake::RDocTask.new(:doc) do |rd|
+  rd.main = "README.md"
+  rd.rdoc_dir = "doc"
+  rd.rdoc_files.include("README.md", "lib/**/*.rb")
+end
