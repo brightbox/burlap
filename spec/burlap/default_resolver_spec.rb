@@ -38,7 +38,7 @@ describe Burlap::DefaultResolver do
         result.call.should == "half-caste symphony"
       end
     end
-
+    it "should use the last argument if it responds to #call in place of a block"
   end
 
 end

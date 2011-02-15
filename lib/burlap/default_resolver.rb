@@ -1,3 +1,5 @@
+require "time"
+
 module Burlap
   class DefaultResolver
 
@@ -20,11 +22,78 @@ module Burlap
       @mappings
     end
 
+    # obj is expected to respond to #name, #value and #children
+    # (eg, an instance of BaseTag)
     def convert_to_native obj
+      mapping = mappings[obj.name] || raise(Error, "couldn't handle tag #{obj.name.inspect}")
+      mapping.call(obj)
     end
 
   end
 
   # And set ourselves as the default
   self.resolver ||= DefaultResolver.new
+end
+
+Burlap.resolver.mappings "burlap:reply" do |tag|
+  tag.children.first.to_ruby if tag.children.first
+end
+
+Burlap.resolver.mappings "map" do |tag|
+  # Pop the first element off
+  t = tag.children.shift.to_ruby
+
+  # And then the rest are matched pairs
+  # We use an array here because ruby 1.8.x is _FUN_ to
+  # use ordered hashes with and doing it in an array is
+  # easier for now. Viva la 1.9!
+  values = []
+
+  tag.children.each_slice(2) do |arr|
+    key, value = arr.map(&:to_ruby)
+    values << [key, value]
+  end
+
+  # klass = Map.mappers[t]
+  # m = klass.new
+  # m.contents = dict
+  # m.type = t
+  # m.to_ruby
+  Burlap::Hash[values, t]
+end
+
+Burlap.resolver.mappings "type", "string" do |tag|
+  tag.value.to_s
+end
+
+Burlap.resolver.mappings "int", "length" do |tag|
+  tag.value.to_i
+end
+
+Burlap.resolver.mappings "null" do |tag|
+  nil
+end
+
+Burlap.resolver.mappings "date" do |tag|
+  ::Time.parse(tag.value) if tag.value
+end
+
+Burlap.resolver.mappings "list" do |tag|
+  # We don't actually care about the type or length of the
+  # array in ruby, but we shift it out the way anyway.
+  t = tag.children.shift.to_ruby
+  length = tag.children.shift.to_ruby
+
+  # We also care about the order here, so…
+  # We use an array here because ruby 1.8.x is _FUN_ to
+  # use ordered hashes with and doing it in an array is
+  # easier for now. Viva la 1.9!
+  values = []
+
+  tag.children.each_slice(2) do |arr|
+    key, value = arr.map(&:to_ruby)
+    values << [key, value]
+  end
+
+  Burlap::Array[*values]
 end
