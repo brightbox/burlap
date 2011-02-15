@@ -32,7 +32,7 @@ describe Burlap::Hash do
 
   describe "#inspect" do
     before :all do
-      @h = Burlap::Hash[{"one" => "two", :three => 4}, "Fred"]
+      @h = Burlap::Hash[[["one", "two"], [:three, 4]], "Fred"]
     end
     it "should not contain OrderedHash" do
       @h.inspect.should_not include("OrderedHash")
