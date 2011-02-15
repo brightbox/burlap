@@ -38,7 +38,7 @@ module Burlap
     def inspect
       # we have to build our hash string manually so it's ordered, can't call #to_h.inspect under 1.8
       # as that returns an _un_ordered hash.
-      "#<#{self.class} __type__=#{__type__} {#{map {|k,v| "#{k.inspect}=>#{v.inspect}"}.join(", ")}}>"
+      "#<#{self.class} __type__=#{__type__.inspect} {#{map {|k,v| "#{k.inspect}=>#{v.inspect}"}.join(", ")}}>"
     end
 
     # Return ourselves as a plain old ruby Hash

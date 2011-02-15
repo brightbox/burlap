@@ -44,7 +44,7 @@ describe Burlap::Hash do
       @h.inspect.should include(%({"one"=>"two", :three=>4}))
     end
     it "should contain the type, inspected" do
-      @h.inspect.should include("__type__=Fred")
+      @h.inspect.should include(%Q{__type__="Fred"})
     end
   end
 
