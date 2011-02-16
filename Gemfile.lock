@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    burlap (0.0.1)
+    burlap (0.0.5)
       builder (~> 2.0)
       nokogiri (~> 1.4.4)
 
