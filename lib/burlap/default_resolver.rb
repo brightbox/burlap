@@ -1,4 +1,5 @@
 require "time"
+require "ostruct"
 
 module Burlap
   class DefaultResolver
@@ -43,23 +44,18 @@ Burlap.resolver.mappings "map" do |tag|
   # Pop the first element off
   t = tag.children.shift.to_ruby
 
-  # And then the rest are matched pairs
-  # We use an array here because ruby 1.8.x is _FUN_ to
-  # use ordered hashes with and doing it in an array is
-  # easier for now. Viva la 1.9!
-  values = []
+  # then parse the rest of the children as key/values
+  values = tag.parse_matched_pairs
 
-  tag.children.each_slice(2) do |arr|
-    key, value = arr.map(&:to_ruby)
-    values << [key, value]
-  end
-
-  # klass = Map.mappers[t]
-  # m = klass.new
-  # m.contents = dict
-  # m.type = t
-  # m.to_ruby
   Burlap::Hash[values, t]
+end
+
+Burlap.resolver.mappings "fault" do |tag|
+  # Parse the children as key/values
+  values = tag.parse_matched_pairs
+
+  # and then turn it into an open struct
+  OpenStruct.new(values)
 end
 
 Burlap.resolver.mappings "type", "string" do |tag|
@@ -84,16 +80,8 @@ Burlap.resolver.mappings "list" do |tag|
   t = tag.children.shift.to_ruby
   length = tag.children.shift.to_ruby
 
-  # We also care about the order here, so…
-  # We use an array here because ruby 1.8.x is _FUN_ to
-  # use ordered hashes with and doing it in an array is
-  # easier for now. Viva la 1.9!
-  values = []
-
-  tag.children.each_slice(2) do |arr|
-    key, value = arr.map(&:to_ruby)
-    values << [key, value]
-  end
+  # Parse the rest of the children as key/values
+  values = tag.parse_matched_pairs
 
   Burlap::Array[*values]
 end
