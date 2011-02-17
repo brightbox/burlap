@@ -26,7 +26,15 @@ module Burlap
       values = []
 
       self.children.each_slice(2) do |arr|
-        key, value = arr.map(&:to_ruby)
+        key = arr.first.to_ruby
+
+        value = if arr.last.name == "ref"
+          i = arr.last.value.to_i
+          values[i].last
+        else
+          arr.last.to_ruby
+        end
+
         values << [key, value]
       end
 

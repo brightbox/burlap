@@ -85,3 +85,7 @@ Burlap.resolver.mappings "list" do |tag|
 
   Burlap::Array[*values]
 end
+
+Burlap.resolver.mappings "ref" do |tag|
+  tag.value
+end
