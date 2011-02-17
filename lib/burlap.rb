@@ -34,6 +34,7 @@ require "burlap/hash"
 require "burlap/node"
 require "burlap/core_ext" # todo: make optional?
 require "burlap/base_tag"
+require "burlap/fault"
 
 require "burlap/call"
 require "burlap/listener"

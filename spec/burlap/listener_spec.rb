@@ -18,7 +18,7 @@ describe Burlap::Listener do
       reply.should_not == nil
 
       response = Burlap.parse(reply)
-      response.should be_a_kind_of(OpenStruct)
+      response.should be_a_kind_of(Burlap::Fault)
       response.code.should == "ServiceException"
       response.message.should == "No row with the given identifier exists: [com.sapienter.jbilling.server.user.db.UserDTO#21]"
     end
