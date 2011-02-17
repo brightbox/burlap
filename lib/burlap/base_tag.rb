@@ -18,6 +18,21 @@ module Burlap
       @value ||= ""
     end
 
+    def parse_matched_pairs
+      # The children are matched pairs.
+      # We use an array here because ruby 1.8.x is _FUN_ to
+      # use ordered hashes with and doing it in an array is
+      # easier for now. Viva la 1.9!
+      values = []
+
+      self.children.each_slice(2) do |arr|
+        key, value = arr.map(&:to_ruby)
+        values << [key, value]
+      end
+
+      values
+    end
+
     def to_ruby
       Burlap.resolver.convert_to_native self
     end
