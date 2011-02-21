@@ -59,6 +59,17 @@ describe Burlap::DefaultResolver do
       end
     end
 
+    describe "boolean" do
+      it "should parse true" do
+        true_tag = Burlap::BaseTag.new(:name => "boolean", :value => "1")
+        @resolver.convert_to_native(true_tag).should == true
+      end
+      it "should parse false" do
+        false_tag = Burlap::BaseTag.new(:name => "boolean", :value => "0")
+        @resolver.convert_to_native(false_tag).should == false
+      end
+    end
+
   end
 
 end

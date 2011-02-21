@@ -89,3 +89,7 @@ end
 Burlap.resolver.mappings "ref" do |tag|
   tag.value
 end
+
+Burlap.resolver.mappings "boolean" do |tag|
+  tag.value.to_i == 1
+end
