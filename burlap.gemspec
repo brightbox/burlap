@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency "builder", "~> 3.0"
 
   s.add_development_dependency "rspec", "~> 2.0"
-  s.add_development_dependency "activesupport", "~> 2.3.4"
+  s.add_development_dependency "activesupport", ">= 2.3.4"
   s.add_development_dependency "timecop", "= 0.3.5"
   s.add_development_dependency "rake"
   s.add_development_dependency "yard"
