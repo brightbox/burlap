@@ -1,7 +1,7 @@
 require "rubygems"
 require "bundler/setup"
 require "rspec"
-require "active_support/core_ext/hash/except"
+require "active_support"
 require "timecop"
 
 require "burlap"
