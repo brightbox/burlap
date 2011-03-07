@@ -27,10 +27,10 @@ module Burlap
 
       self.children.each_slice(2) do |arr|
         key = arr.first.to_ruby
-
         value = if arr.last.name == "ref"
-          i = arr.last.value.to_i
-          values[i].last
+          i = arr.last.value.to_i - 1
+          v = values[i]
+          v.last if v
         else
           arr.last.to_ruby
         end
