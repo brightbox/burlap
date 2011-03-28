@@ -58,7 +58,7 @@ module Burlap
       # Build nodes for all the content
       contents += self.map do |k,v|
         [k, v]
-      end.flatten
+      end.flatten(1)
 
       content = contents.map(&:to_burlap).join("")
 

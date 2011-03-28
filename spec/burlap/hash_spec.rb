@@ -130,6 +130,30 @@ describe Burlap::Hash do
         @result.should == xml_string
       end
     end
+    describe "wrapping empty arrays" do
+      before do
+        @bd = Burlap::Hash[{:numbers => []}]
+        @result = @bd.to_burlap
+      end
+      it "should return a string" do
+        @result.should be_a_kind_of(String)
+      end
+      it "should be generated properly" do
+        xml_string = <<-EOF
+          <map>
+            <type></type>
+
+            <string>numbers</string>
+            <list>
+              <type></type>
+              <length>0</length>
+            </list>
+          </map>
+        EOF
+        xml_string.gsub!(/(^|\n)\s*/m, "")
+        @result.should == xml_string
+      end
+    end
   end
 
 end
