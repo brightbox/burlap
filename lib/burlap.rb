@@ -25,6 +25,8 @@ module Burlap
 
 end
 
+require "core_ext/time_burlap_iso8601"
+
 require "burlap/default_resolver"
 # burlap/version already got included by gemspec
 require "burlap/error"
