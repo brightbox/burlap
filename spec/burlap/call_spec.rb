@@ -55,7 +55,7 @@ describe Burlap::Call do
         @response.should =~ %r{<boolean>1</boolean>}
       end
       it "should have a date argument element" do
-        @response.should =~ %r{<date>#{Regexp.escape(Time.now.iso8601(3))}</date>}
+        @response.should =~ %r{<date>#{Regexp.escape(Time.now.burlap_iso8601(3))}</date>}
       end
       describe "headers" do
         it "should generate header key/values"
