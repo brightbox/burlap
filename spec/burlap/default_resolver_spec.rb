@@ -71,6 +71,24 @@ describe Burlap::DefaultResolver do
       end
     end
 
+    describe "list" do
+      it "should parse an empty array" do
+        arr = Burlap.parse "<list><type>[java.lang.Integer</type><length>0</length></list>"
+
+        arr.should == []
+      end
+      it "should parse an array containing one string" do
+        arr = Burlap.parse "<list><type>[string</type><length>1</length><string>1</string></list>"
+
+        arr.should == ["1"]
+      end
+      it "should parse an array with multiple elements" do
+        arr = Burlap.parse %{<list><type></type><length>3</length><int>0</int><double>1.3</double><string>foobar</string></list>}
+
+        arr.should == [0, 1.3, "foobar"]
+      end
+    end
+
   end
 
 end

@@ -80,12 +80,12 @@ end
 
 Burlap.resolver.mappings "list" do |tag|
   # We don't actually care about the type or length of the
-  # array in ruby, but we shift it out the way anyway.
+  # array in ruby, but we shift it out the way so we can ignore it.
   t = tag.children.shift.to_ruby
   length = tag.children.shift.to_ruby
 
   # Parse the rest of the children as key/values
-  values = tag.parse_matched_pairs
+  values = tag.children.map &:to_ruby
 
   Burlap::Array[*values]
 end
