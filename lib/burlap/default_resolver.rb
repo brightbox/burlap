@@ -66,6 +66,10 @@ Burlap.resolver.mappings "int", "length" do |tag|
   tag.value.to_i
 end
 
+Burlap.resolver.mappings "double" do |tag|
+  tag.value.to_f
+end
+
 Burlap.resolver.mappings "null" do |tag|
   nil
 end

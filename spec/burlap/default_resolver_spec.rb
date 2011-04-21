@@ -48,6 +48,7 @@ describe Burlap::DefaultResolver do
 
     [
       {:name => "int", :burlap => "15", :expected => 15},
+      {:name => "double", :burlap => "1.5", :expected => 1.5},
       {:name => "string", :burlap => "some string value", :expected => "some string value"},
       {:name => "null", :burlap => "", :expected => nil}
     ].each do |tag|
