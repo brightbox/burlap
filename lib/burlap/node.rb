@@ -22,12 +22,27 @@ module Burlap
         root << self.value.to_s
       end
 
-      root.to_xml(nokogiri_xml_options)
+      convert_hex_entities_to_decimal root.to_xml(nokogiri_xml_options)
     end
 
   protected
     def nokogiri_xml_options
       {:indent => 0, :indent_text => "", :save_with => Nokogiri::XML::Node::SaveOptions::AS_HTML}
+    end
+
+    # Converts all hex entities into decimal entities.
+    # 
+    # eg: &#xE5; into &#229;
+    # 
+    # @param [String, #gsub] string string to convert entities in
+    # @return [String] string with decimal entities
+    def convert_hex_entities_to_decimal string
+      string.gsub(/&#x[0-9a-f]+;/i) do |match|
+        # Extract the hex value and convert to decimal
+        dec = match[/x([0-9a-f]+;)/i, 1].to_i(16)
+
+        "&##{dec};"
+      end
     end
   end
 end

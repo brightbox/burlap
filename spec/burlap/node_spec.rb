@@ -13,6 +13,10 @@ describe Burlap::Node do
       it "should put name in brackets" do
         @result.should == "<method>updateUser</method>"
       end
+      it "should use decimal escaping for utf8 characters" do
+        result = Burlap::Node.new(:name => "method", :value => "Håva").to_burlap
+        result.should == %{<method>H&#229;va</method>}
+      end
     end
     describe "with nested XML" do
       before :all do
