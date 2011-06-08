@@ -89,6 +89,15 @@ describe Burlap::DefaultResolver do
       end
     end
 
+    describe "base64" do
+      it "should parse and return as a string" do
+        str = "some string of some text"
+        response = Burlap.parse "<base64>#{Base64.encode64(str)}</base64>"
+        response.should be_a_kind_of(String)
+        response.should == str
+      end
+    end
+
   end
 
 end

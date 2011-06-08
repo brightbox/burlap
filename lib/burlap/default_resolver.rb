@@ -97,3 +97,7 @@ end
 Burlap.resolver.mappings "boolean" do |tag|
   tag.value.to_i == 1
 end
+
+Burlap.resolver.mappings "base64" do |tag|
+  Base64.decode64(tag.value.to_s)
+end
