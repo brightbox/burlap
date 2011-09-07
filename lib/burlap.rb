@@ -26,9 +26,7 @@ module Burlap
 end
 
 require "base64"
-require "burlap/burlap_8601"
 require "core_ext/time_burlap_iso8601"
-require "core_ext/date_time_burlap_iso8601"
 
 require "burlap/default_resolver"
 # burlap/version already got included by gemspec
