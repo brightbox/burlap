@@ -26,6 +26,7 @@ module Burlap
 end
 
 require "base64"
+require "erb"
 require "core_ext/time_burlap_iso8601"
 
 require "burlap/default_resolver"
