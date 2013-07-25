@@ -12,4 +12,14 @@ describe String do
       @result.should == "<string>some string</string>"
     end
   end
+
+  context "for html unsafe content" do
+    before do
+      @result = "<script type='text/js'>hello</script>".to_burlap
+    end
+
+    it "should return escaped html" do
+      @result.should =~ /&lt;script type='text\/js'&gt;hello&lt;\/script&gt;/
+    end
+  end
 end
