@@ -55,7 +55,11 @@ Burlap.resolver.mappings "fault" do |tag|
   values = tag.parse_matched_pairs
 
   # and then turn it into an open struct
-  Burlap::Fault.new(values)
+  if RUBY_VERSION > '1.9'
+    Burlap::Fault.new(Hash[values])
+  else
+    Burlap::Fault.new(values)
+  end
 end
 
 Burlap.resolver.mappings "type", "string" do |tag|
