@@ -1,7 +1,11 @@
 require "burlap/core_ext/array"
-# require "burlap/core_ext/big_decimal"
 require "burlap/core_ext/boolean"
-require "burlap/core_ext/fixnum"
+if 1.class == Integer
+  require "burlap/core_ext/integer"
+else
+  # require "burlap/core_ext/big_decimal"
+  require "burlap/core_ext/fixnum"
+end
 require "burlap/core_ext/float"
 require "burlap/core_ext/hash"
 require "burlap/core_ext/nil"
