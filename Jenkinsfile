@@ -40,6 +40,55 @@ pipeline {
             sh 'bundle exec rake doc'
           }
         }
+        stage("Ruby 2.2") {
+          agent {
+            docker {
+              image 'ruby:2.2'
+            }
+          }
+          steps {
+            sh 'bundle install --deployment'
+            sh 'bundle exec rake spec'
+            sh 'bundle exec rake doc'
+          }
+        }
+        stage("Ruby 2.3") {
+          agent {
+            docker {
+              image 'ruby:2.3'
+            }
+          }
+          steps {
+            sh 'bundle install --deployment'
+            sh 'bundle exec rake spec'
+            sh 'bundle exec rake doc'
+          }
+        }
+        stage("Ruby 2.4") {
+          agent {
+            docker {
+              image 'ruby:2.4'
+            }
+          }
+          steps {
+            sh 'bundle install --deployment'
+            sh 'bundle exec rake spec'
+            sh 'bundle exec rake doc'
+          }
+        }
+        stage("Ruby 2.5") {
+          agent {
+            docker {
+              image 'ruby:2.5'
+            }
+          }
+          steps {
+            sh 'bundle install --deployment'
+            sh 'bundle exec rake spec'
+            sh 'bundle exec rake doc'
+          }
+        }
+
       }
     }
   }
