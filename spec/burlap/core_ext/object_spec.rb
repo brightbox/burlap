@@ -6,7 +6,7 @@ describe Object do
       Object.new.to_burlap.should be_a_kind_of(String)
     end
     it "should invoke Burlap::Hash with type of classname" do
-      hash = mock(Burlap::Hash)
+      hash = double(Burlap::Hash)
       Burlap::Hash.should_receive(:[]).with([], "Object").and_return(hash)
       hash.should_receive(:to_burlap).and_return("<my>xml</my>")
 

@@ -3,7 +3,7 @@ require "spec_helper"
 describe Burlap::Array do
   describe "#to_burlap" do
     before do
-      @mock_obj = mock(Object, :to_burlap => "<mock>my stuff here</mock>")
+      @mock_obj = double(Object, :to_burlap => "<mock>my stuff here</mock>")
       @array = Burlap::Array["some", @mock_obj]
       @result = @array.to_burlap
       @doc = Nokogiri::XML(@result)
@@ -12,7 +12,7 @@ describe Burlap::Array do
       @result.should be_a_kind_of(String)
     end
     it "should be a list" do
-      @doc.css("list").should have(1).element
+      @doc.css("list").size.should eq(1)
     end
     it "should have a type attribute" do
       type, = element_exists_with :selector => "type", :count => 1

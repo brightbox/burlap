@@ -5,7 +5,7 @@ describe Class do
     # we can't dump anonymous classes
     it "should raise an error" do
       pending
-      Class.new.to_burlap
+      expect { Class.new.to_burlap }.to raise_error
     end
   end
 end
