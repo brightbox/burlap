@@ -10,7 +10,7 @@ module Burlap
   def self.parse io_handle
     listener = Listener.new
     parser = Nokogiri::XML::SAX::Parser.new(listener)
-    parser.parse(io_handle)
+    parser.parse(io_handle.encode!(Encoding::UTF_8))
     listener.result
   end
 
