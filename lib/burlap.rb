@@ -1,18 +1,4 @@
 module Burlap
-  # Regexp from https://www.johnhawthorn.com/2009/10/sanitizing-utf8-in-ruby/
-  SANITIZE_ASCII_UTF8_REGEX = /\A(
-    [\x09\x0A\x0D\x20-\x7E]            # ASCII
-    | [\xC2-\xDF][\x80-\xBF]             # non-overlong 2-byte
-    |  \xE0[\xA0-\xBF][\x80-\xBF]        # excluding overlongs
-    | [\xE1-\xEC\xEE][\x80-\xBF]{2}      # straight 3-byte
-    |  \xEF[\x80-\xBE]{2}                # 
-    |  \xEF\xBF[\x80-\xBD]               # excluding U+fffe and U+ffff
-    |  \xED[\x80-\x9F][\x80-\xBF]        # excluding surrogates
-    |  \xF0[\x90-\xBF][\x80-\xBF]{2}     # planes 1-3
-    | [\xF1-\xF3][\x80-\xBF]{3}          # planes 4-15
-    |  \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
-  )*\Z/nx;
-
   # Stores the resolver object for parsing burlap
   class << self
     attr_accessor :resolver
@@ -20,14 +6,11 @@ module Burlap
 
   # Turns a burlap string read from `io_handle` into native
   # ruby objects.
-  def self.parse io_handle
+  def self.parse(io_handle, strict = false)
     listener = Listener.new
     parser = Nokogiri::XML::SAX::Parser.new(listener)
 
-    if io_handle.encoding == Encoding::ASCII_8BIT
-      io_handle = sanitize_ascii(io_handle)
-      io_handle.encode!(Encoding::UTF_8)
-    elsif io_handle.encoding == Encoding::ISO_8859_1
+    if strict && io_handle.encoding != Encoding::UTF_8
       io_handle.encode!(Encoding::UTF_8)
     end
 
@@ -42,10 +25,6 @@ module Burlap
     else
       raise Error, "couldn't dump #{obj.inspect}"
     end
-  end
-
-  def self.sanitize_ascii(input)
-    input.split(//).grep(SANITIZE_ASCII_UTF8_REGEX).join
   end
 end
 

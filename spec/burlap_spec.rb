@@ -20,7 +20,11 @@ describe Burlap do
         let(:encoding) { Encoding::ASCII_8BIT }
 
         it do
-          expect(Burlap.parse(body)).to eq(Burlap::Hash["emoji" => ""])
+          expect(Burlap.parse(body)).to be_nil
+        end
+
+        it do
+          expect { Burlap.parse(body, true) }.to raise_error(Encoding::UndefinedConversionError)
         end
       end
 
@@ -31,6 +35,10 @@ describe Burlap do
         it do
           expect(Burlap.parse(body)).to eq(Burlap::Hash["emoji" => "\u{1F33B}"])
         end
+
+        it do
+          expect(Burlap.parse(body, true)).to eq(Burlap::Hash["emoji" => "\u{1F33B}"])
+        end
       end
 
       context "with ISO-8859-1 encoded burlap" do
@@ -38,7 +46,11 @@ describe Burlap do
         let(:encoding) { Encoding::ISO_8859_1 }
 
         it do
-          expect(Burlap.parse(body)).to eq(Burlap::Hash["emoji" => "í ¼"])
+          expect(Burlap.parse(body)).to be_nil
+        end
+
+        it do
+          expect(Burlap.parse(body, true)).to eq(Burlap::Hash["emoji" => "í ¼"])
         end
       end
     end
