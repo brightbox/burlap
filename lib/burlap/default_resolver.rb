@@ -3,21 +3,15 @@ require "ostruct"
 
 module Burlap
   class DefaultResolver
-
-    def mappings *names
+    def mappings(*names, &block)
       # Default's to a hash
       @mappings ||= {}
       # return early, return often. Or is that release?
       return @mappings if names.empty?
 
-      raise ArgumentError, "block is required when name is given" unless block_given?
-
-      # hack to get the passed block in a variable with less speed cost than &block in args
-      block = Proc.new
-
       # Set said block for each name
       names.each do |name|
-        @mappings[name] = block
+        @mappings[name] = proc(&block)
       end
 
       @mappings
@@ -29,7 +23,6 @@ module Burlap
       mapping = mappings[obj.name] || raise(Error, "couldn't handle tag #{obj.name.inspect}")
       mapping.call(obj)
     end
-
   end
 
   # And set ourselves as the default

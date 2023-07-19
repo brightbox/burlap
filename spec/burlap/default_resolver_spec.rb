@@ -4,14 +4,11 @@ describe Burlap::DefaultResolver do
 
   describe "#mappings" do
     before { @resolver = Burlap::DefaultResolver.new }
+
     it "should default to a hash" do
       @resolver.mappings.should == {}
     end
-    it "should raise an error if name is passed with no block" do
-      lambda do
-        @resolver.mappings "thing"
-      end.should raise_error(ArgumentError, "block is required when name is given")
-    end
+
     it "should store a single mapping when passed a name and block" do
       @resolver.mappings["thing"].should == nil
 
@@ -24,6 +21,7 @@ describe Burlap::DefaultResolver do
       @result.should be_a_kind_of(Proc)
       @result.call.should == "thing's block"
     end
+
     it "should store the same block against multiple mappings when passed more than one name at once" do
       @resolver.mappings "black", "white" do
         # Mixing black and white keys. Geddit?
@@ -38,6 +36,7 @@ describe Burlap::DefaultResolver do
         result.call.should == "half-caste symphony"
       end
     end
+
     it "should use the last argument if it responds to #call in place of a block"
   end
 
@@ -65,6 +64,7 @@ describe Burlap::DefaultResolver do
         true_tag = Burlap::BaseTag.new(:name => "boolean", :value => "1")
         @resolver.convert_to_native(true_tag).should == true
       end
+
       it "should parse false" do
         false_tag = Burlap::BaseTag.new(:name => "boolean", :value => "0")
         @resolver.convert_to_native(false_tag).should == false
@@ -77,11 +77,13 @@ describe Burlap::DefaultResolver do
 
         arr.should == []
       end
+
       it "should parse an array containing one string" do
         arr = Burlap.parse "<list><type>[string</type><length>1</length><string>1</string></list>"
 
         arr.should == ["1"]
       end
+
       it "should parse an array with multiple elements" do
         arr = Burlap.parse %{<list><type></type><length>3</length><int>0</int><double>1.3</double><string>foobar</string></list>}
 
@@ -97,7 +99,5 @@ describe Burlap::DefaultResolver do
         response.should == str
       end
     end
-
   end
-
 end
