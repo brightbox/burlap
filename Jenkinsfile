@@ -88,7 +88,66 @@ pipeline {
             sh 'bundle exec rake doc'
           }
         }
-
+        stage("Ruby 2.6") {
+          agent {
+            docker {
+              image 'ruby:2.6'
+            }
+          }
+          steps {
+            sh 'bundle install'
+            sh 'bundle exec rake spec'
+            sh 'bundle exec rake doc'
+          }
+        }
+        stage("Ruby 2.7") {
+          agent {
+            docker {
+              image 'ruby:2.7'
+            }
+          }
+          steps {
+            sh 'bundle install'
+            sh 'bundle exec rake spec'
+            sh 'bundle exec rake doc'
+          }
+        }
+        stage("Ruby 3.0") {
+          agent {
+            docker {
+              image 'ruby:3.0'
+            }
+          }
+          steps {
+            sh 'bundle install'
+            sh 'bundle exec rake spec'
+            sh 'bundle exec rake doc'
+          }
+        }
+        stage("Ruby 3.1") {
+          agent {
+            docker {
+              image 'ruby:3.1'
+            }
+          }
+          steps {
+            sh 'bundle install'
+            sh 'bundle exec rake spec'
+            sh 'bundle exec rake doc'
+          }
+        }
+        stage("Ruby 3.2") {
+          agent {
+            docker {
+              image 'ruby:3.2'
+            }
+          }
+          steps {
+            sh 'bundle install'
+            sh 'bundle exec rake spec'
+            sh 'bundle exec rake doc'
+          }
+        }
       }
     }
   }
