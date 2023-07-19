@@ -11,7 +11,7 @@ pipeline {
             }
           }
           steps {
-            sh 'BUNDLE_APP_CONFIG=/tmp/bundle.config BUNDLE_DISABLE_SHARED_GEMS=true bundle install --deployment'
+            sh 'BUNDLE_APP_CONFIG=/tmp/bundle.config BUNDLE_DISABLE_SHARED_GEMS=true bundle install'
             sh 'BUNDLE_APP_CONFIG=/tmp/bundle.config bundle exec rake spec'
             sh 'BUNDLE_APP_CONFIG=/tmp/bundle.config bundle exec rake doc'
           }
@@ -23,7 +23,7 @@ pipeline {
             }
           }
           steps {
-            sh 'bundle install --deployment'
+            sh 'bundle install'
             sh 'bundle exec rake spec'
             sh 'bundle exec rake doc'
           }
@@ -35,7 +35,7 @@ pipeline {
             }
           }
           steps {
-            sh 'bundle install --deployment'
+            sh 'bundle install'
             sh 'bundle exec rake spec'
             sh 'bundle exec rake doc'
           }
@@ -47,7 +47,7 @@ pipeline {
             }
           }
           steps {
-            sh 'bundle install --deployment'
+            sh 'bundle install'
             sh 'bundle exec rake spec'
             sh 'bundle exec rake doc'
           }
@@ -59,7 +59,7 @@ pipeline {
             }
           }
           steps {
-            sh 'bundle install --deployment'
+            sh 'bundle install'
             sh 'bundle exec rake spec'
             sh 'bundle exec rake doc'
           }
@@ -71,7 +71,7 @@ pipeline {
             }
           }
           steps {
-            sh 'bundle install --deployment'
+            sh 'bundle install'
             sh 'bundle exec rake spec'
             sh 'bundle exec rake doc'
           }
@@ -83,7 +83,7 @@ pipeline {
             }
           }
           steps {
-            sh 'bundle install --deployment'
+            sh 'bundle install'
             sh 'bundle exec rake spec'
             sh 'bundle exec rake doc'
           }
