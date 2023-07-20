@@ -1,30 +1,31 @@
 require "spec_helper"
 
-describe Burlap::Listener do
-  it "should be specced"
-  describe "no such method fault response" do
-    it "should parse it out" do
-      reply = "<burlap:reply><fault><string>code</string><string>NoSuchMethodException</string><string>message</string><string>The service has no method named: getUserID</string></fault></burlap:reply>"
+RSpec.describe Burlap::Listener do
+  describe ".parse" do
+    subject(:result) { Burlap.parse(reply) }
 
-      response = Burlap.parse(reply)
-      response.should be_a_kind_of(OpenStruct)
-      response.code.should == "NoSuchMethodException"
-      response.message.should == "The service has no method named: getUserID"
-    end
-  end
-  describe "record not found response" do
-    it "should parse successfully" do
-      reply = record_not_found_burlap
-      reply.should_not == nil
+    context "when response is no such method" do
+      let(:reply) { File.read("spec/data/no_such_method.burlap") }
 
-      response = Burlap.parse(reply)
-      response.should be_a_kind_of(Burlap::Fault)
-      response.code.should == "ServiceException"
-      response.message.should == "No row with the given identifier exists: [com.sapienter.jbilling.server.user.db.UserDTO#21]"
+      before { raise if reply.nil? }
+
+      it "parses successfully" do
+        expect(result).to be_a_kind_of(OpenStruct)
+        expect(result.code).to eq("NoSuchMethodException")
+        expect(result.message).to eq("The service has no method named: getUserID")
+      end
     end
 
-    def record_not_found_burlap
-      File.read("spec/data/record_not_found.burlap")
+    describe "when response is record not found" do
+      let(:reply) { File.read("spec/data/record_not_found.burlap") }
+
+      before { raise if reply.nil? }
+
+      it "parses successfully" do
+        expect(result).to be_a_kind_of(Burlap::Fault)
+        expect(result.code).to eq("ServiceException")
+        expect(result.message).to eq("No row with the given identifier exists: [com.sapienter.jbilling.server.user.db.UserDTO#21]")
+      end
     end
   end
 end

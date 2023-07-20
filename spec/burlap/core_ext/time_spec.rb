@@ -1,21 +1,23 @@
 require "spec_helper"
 
-describe Time do
+RSpec.describe Time do
   describe "#to_burlap" do
-    before do
-      @result = Time.utc(2011, 9, 11, 10, 0).to_burlap
+    subject(:burlap) { described_class.utc(2011, 9, 11, 10, 0).to_burlap }
+
+    it "returns a string" do
+      expect(burlap).to be_a_kind_of(String)
     end
-    it "should return a string" do
-      @result.should be_a_kind_of(String)
+
+    it "is correct" do
+      expect(burlap).to eq("<date>20110911T100000.000Z</date>")
     end
-    it "should be correct" do
-      @result.should == "<date>20110911T100000.000Z</date>"
+
+    it "does not contain dashes" do
+      expect(burlap).not_to include("-")
     end
-    it "should not contain dashes" do
-      @result.should_not =~ /-/
-    end
-    it "should not contain colons" do
-      @result.should_not =~ /:/
+
+    it "does not contain colons" do
+      expect(burlap).not_to include(":")
     end
   end
 end

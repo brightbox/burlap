@@ -1,37 +1,45 @@
 require "spec_helper"
 
-describe Object do
+RSpec.describe Object do
   describe "#to_burlap" do
-    it "should return a string" do
-      Object.new.to_burlap.should be_a_kind_of(String)
-    end
-    it "should invoke Burlap::Hash with type of classname" do
-      hash = double(Burlap::Hash)
-      Burlap::Hash.should_receive(:[]).with([], "Object").and_return(hash)
-      hash.should_receive(:to_burlap).and_return("<my>xml</my>")
+    subject(:burlap) { described_class.new.to_burlap }
 
-      Object.new.to_burlap.should == "<my>xml</my>"
+    it "returns a string" do
+      expect(burlap).to be_a_kind_of(String)
     end
-    describe "with instance variables" do
 
-      class InstanceVariablesObject
-        def initialize
-          @one = 1
-          @two = "something here"
-          @three = :bingo
+    it "invokes Burlap::Hash with type of classname" do
+      hash = instance_double(Burlap::Hash)
+      expect(Burlap::Hash).to receive(:[]).with([], "Object").and_return(hash)
+      expect(hash).to receive(:to_burlap).and_return("<my>xml</my>")
+
+      expect(burlap).to eq("<my>xml</my>")
+    end
+
+    context "with instance variables" do
+      subject(:burlap) { InstanceVariablesObject.new.to_burlap }
+
+      let(:klass) do
+        Class.new do
+          def initialize
+            @one = 1
+            @two = "something here"
+            @three = :bingo
+          end
         end
       end
 
-      before :all do
-        @result = InstanceVariablesObject.new.to_burlap;
+      before do
+        stub_const("InstanceVariablesObject", klass)
         @doc = Nokogiri::XML(@result)
       end
 
-      it "should return a string" do
-        @result.should be_a_kind_of(String)
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
       end
-      it "should decompile into burlap" do
-        xml_string = <<-EOF
+
+      it "decompiles into burlap" do
+        xml_string = <<-XML
           <map>
             <type>InstanceVariablesObject</type>
 
@@ -44,10 +52,10 @@ describe Object do
             <string>two</string>
             <string>something here</string>
           </map>
-        EOF
-        # Strip newlines & whitespace between tags - burlap is one string
-        xml_string.gsub!(/(^|\n)\s*/m, "")
-        @result.should == xml_string
+        XML
+
+        format_xml_as_burlap(xml_string)
+        expect(burlap).to eq(xml_string)
       end
     end
   end

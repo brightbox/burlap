@@ -1,39 +1,28 @@
 require "spec_helper"
 
-describe Burlap::Array do
+RSpec.describe Burlap::Array do
   describe "#to_burlap" do
-    before do
-      @mock_obj = double(Object, :to_burlap => "<mock>my stuff here</mock>")
-      @array = Burlap::Array["some", @mock_obj]
-      @result = @array.to_burlap
-      @doc = Nokogiri::XML(@result)
-    end
-    it "should return a string" do
-      @result.should be_a_kind_of(String)
-    end
-    it "should be a list" do
-      @doc.css("list").size.should eq(1)
-    end
-    it "should have a type attribute" do
-      type, = element_exists_with :selector => "type", :count => 1
-      type.name.should == "type"
-      type.content.should == ""
-    end
-    it "should have a length attribute" do
-      value, = element_exists_with :selector => "length", :count => 1
-      value.name.should == "length"
-      value.content.should == @array.size.to_s
-    end
-    it "should have a string attribute" do
-      str, = element_exists_with :selector => "string", :count => 1
-      str.name.should == "string"
-      str.content.should == "some"
-    end
-    it "should have a mock attribute" do
-      obj, = element_exists_with :selector => "mock", :count => 1
-      obj.name.should == "mock"
-      obj.content.should == "my stuff here"
+    subject(:burlap) { array.to_burlap }
+
+    let(:array) { described_class["some", mock_obj] }
+    let(:mock_obj) { instance_double(Object, to_burlap: "<mock>my stuff here</mock>") }
+
+    it "returns a string" do
+      expect(burlap).to be_a_kind_of(String)
     end
 
+    it "is correct" do
+      xml_string = <<-XML
+      <list>
+        <type></type>
+        <length>2</length>
+        <string>some</string>
+        <mock>my stuff here</mock>
+      </list>
+      XML
+
+      format_xml_as_burlap(xml_string)
+      expect(burlap).to eq(xml_string)
+    end
   end
 end

@@ -1,115 +1,191 @@
 require "spec_helper"
 
-describe Burlap::Hash do
-
-  it "should inherit from ordered hash" do
-    Burlap::Hash.ancestors.should include(ActiveSupport::OrderedHash)
+RSpec.describe Burlap::Hash do
+  it "inherits from ordered hash" do
+    expect(described_class.ancestors).to include(ActiveSupport::OrderedHash)
   end
 
-  it { should respond_to(:__type__) }
-  it { should respond_to(:__type__=) }
+  it { is_expected.to respond_to(:__type__) }
+  it { is_expected.to respond_to(:__type__=) }
 
   describe "#__type__" do
-    it "should default to an empty string" do
-      Burlap::Hash.new.__type__.should == ""
+    it "defaults to an empty string" do
+      expect(described_class.new.__type__).to eq("")
     end
   end
 
   describe "#[]" do
-    it "should be compatible with Hash#[]" do
-      bhash = Burlap::Hash["one" => "two", "three" => "four"]
+    subject(:burlap_hash) { described_class[input] }
 
-      bhash.keys.should =~ ["one", "three"]
-      bhash.values.should =~ ["two", "four"]
+    context "when input is a Hash" do
+      let(:input) { {} }
+
+      it "is compatible with Hash#[]" do
+        expect(burlap_hash.keys).to eq([])
+        expect(burlap_hash.values).to eq([])
+      end
+
+      it "is empty string" do
+        expect(burlap_hash.__type__).to eq("")
+      end
     end
-    it "should accept a second string argument to set __type__ directly" do
-      [{}, {:some => "options"}, {:some => "options", :__type__ => "is ignored"}].each do |h|
-        bhash = Burlap::Hash[{}, "com.java.hashmap"]
-        bhash.__type__.should == "com.java.hashmap"
+
+    context "when one argument is given" do
+      let(:input) { { "one" => "two", "three" => "four" } }
+
+      it "is compatible with Hash#[]" do
+        expect(burlap_hash.keys).to eq(%w[one three])
+        expect(burlap_hash.values).to eq(%w[two four])
+      end
+
+      it "is empty string" do
+        expect(burlap_hash.__type__).to eq("")
+      end
+    end
+
+    context "when a __type__ is passed" do
+      let(:input) { { some: "options", __type__: "is ignored" } }
+
+      it "is compatible with Hash#[]" do
+        expect(burlap_hash.keys).to eq(%i[some __type__])
+        expect(burlap_hash.values).to eq(["options", "is ignored"])
+      end
+
+      it "is empty string" do
+        expect(burlap_hash.__type__).to eq("")
+      end
+    end
+
+    context "when a second argument sets type directly" do
+      subject(:burlap_hash) { described_class[input, "com.java.hashmap"] }
+
+      context "without a passed __type__" do
+        let(:input) { { some: "options" } }
+
+        it "is compatible with Hash#[]" do
+          expect(burlap_hash.keys).to eq([:some])
+          expect(burlap_hash.values).to eq(["options"])
+        end
+
+        it "sets __type__ directly" do
+          expect(burlap_hash.__type__).to eq("com.java.hashmap")
+        end
+      end
+
+      context "with a passed __type__" do
+        let(:input) { { some: "options", __type__: "is ignored" } }
+
+        it "is compatible with Hash#[]" do
+          expect(burlap_hash.keys).to eq(%i[some __type__])
+          expect(burlap_hash.values).to eq(["options", "is ignored"])
+        end
+
+        it "sets __type__ directly" do
+          expect(burlap_hash.__type__).to eq("com.java.hashmap")
+        end
       end
     end
   end
 
   describe "#inspect" do
-    before :all do
-      @h = Burlap::Hash[[["one", "two"], [:three, 4]], "Fred"]
+    subject(:burlap_hash) { described_class[[%w[one two], [:three, 4]], "Fred"] }
+
+    it "does not contain OrderedHash" do
+      expect(burlap_hash.inspect).not_to include("OrderedHash")
     end
-    it "should not contain OrderedHash" do
-      @h.inspect.should_not include("OrderedHash")
+
+    it "starts with Burlap::Hash" do
+      expect(burlap_hash.inspect).to match(/#<Burlap::Hash/)
     end
-    it "should start with Burlap::Hash" do
-      @h.inspect.should =~ /#<Burlap::Hash/
+
+    it "contains the hash, inspected" do
+      expect(burlap_hash.inspect).to include(%({"one"=>"two", :three=>4}))
     end
-    it "should contain the hash, inspected" do
-      @h.inspect.should include(%({"one"=>"two", :three=>4}))
-    end
-    it "should contain the type, inspected" do
-      @h.inspect.should include(%Q{__type__="Fred"})
+
+    it "contains the type, inspected" do
+      expect(burlap_hash.inspect).to include(%{__type__="Fred"})
     end
   end
 
   describe "#to_burlap" do
-    describe "wrapping a string" do
+    subject(:burlap) { burlap_hash.to_burlap }
+
+    let(:burlap_hash) { described_class[{ value: "something" }, "org.ruby-lang.string"] }
+
+    context "wrapping a string" do
       # <map>
       #   <type>org.ruby-lang.string</type>
       #   <string>value</string>
       #   <string>something</string>
       # </map>
-      before(:all) do
-        @bd = Burlap::Hash[{:value => "something"}, "org.ruby-lang.string"]
-        @result = @bd.to_burlap
+
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
       end
-      it "should return a string" do
-        @result.should be_a_kind_of(String)
+
+      it "has a map root" do
+        expect(burlap).to match(/^<map>/)
+        expect(burlap).to match(%r{</map>$})
       end
-      it "should have a map root" do
-        @result.should =~ /^<map>/
-        @result.should =~ %r{</map>$}
+
+      it "has a nested type node" do
+        expect(burlap).to match(%r{<type>org.ruby-lang.string</type>})
       end
-      it "should have a nested type node" do
-        @result.should =~ %r{<type>org.ruby-lang.string</type>}
-      end
-      it "should have nested value nodes" do
-        @result.should =~ %r{<string>value</string>}
-        @result.should =~ %r{<string>something</string>}
-      end
-    end
-    describe "wrapping multiple keys" do
-      before :all do
-        @bd = Burlap::Hash[[["name", "caius durling"], ["age", 101]], "burlap.user"]
-        @result = @bd.to_burlap
-        @doc = Nokogiri::XML(@result)
-      end
-      it "should return a string" do
-        @result.should be_a_kind_of(String)
-      end
-      it "should have a map root" do
-        element_exists_with :selector => "map", :count => 1
-      end
-      it "should have a type element" do
-        @result.should =~ %r{<type>burlap.user</type>}
-      end
-      it "should have a name keypair" do
-        @result.should =~ %r{<string>name</string><string>caius durling</string>}
-      end
-      it "should have an age keypair" do
-        @result.should =~ %r{<string>age</string><int>101</int>}
+
+      it "has nested value nodes" do
+        expect(burlap).to match(%r{<string>value</string>})
+        expect(burlap).to match(%r{<string>something</string>})
       end
     end
-    describe "wrapping nested keys" do
+
+    context "wrapping multiple keys" do
+      let(:burlap_hash) { described_class[[["name", "caius durling"], ["age", 101]], "burlap.user"] }
+
       before do
-        # Effectively {"people" => [{"name" => "caius durling", "age" => 101}]}
-        @bd = Burlap::Hash[[
-          ["people", {"name" => "caius durling", "age" => 101}]
-        ], "burlap-peoples"]
-        @result = @bd.to_burlap
-        # <map><type></type><string>people</string><map><type></type><string>name</string><string>caius durling</string><string>age</string><int>101</int></map></map>
+        @doc = Nokogiri::XML(burlap)
       end
-      it "should return a string" do
-        @result.should be_a_kind_of(String)
+
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
       end
-      it "should be generated properly, including nested elements" do
-        xml_string = <<-EOF
+
+      it "is correct" do
+        xml_string = <<-XML
+        <map>
+          <type>burlap.user</type>
+          <string>name</string>
+          <string>caius durling</string>
+          <string>age</string>
+          <int>101</int>
+        </map>
+        XML
+
+        format_xml_as_burlap(xml_string)
+        expect(burlap).to eq(xml_string)
+      end
+
+      it "has a type element" do
+        expect(burlap).to match(%r{<type>burlap.user</type>})
+      end
+
+      it "has a name keypair" do
+        expect(burlap).to match(%r{<string>name</string><string>caius durling</string>})
+      end
+
+      it "has an age keypair" do
+        expect(burlap).to match(%r{<string>age</string><int>101</int>})
+      end
+    end
+
+    context "wrapping nested keys" do
+      let(:burlap_hash) { described_class[[["people", { "name" => "caius durling", "age" => 101 }]], "burlap-peoples"] }
+
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
+      end
+
+      it "is generated properly, including nested elements" do
+        xml_string = <<-XML
           <map>
             <type>burlap-peoples</type>
 
@@ -125,21 +201,21 @@ describe Burlap::Hash do
             </map>
 
           </map>
-        EOF
+        XML
         xml_string.gsub!(/(^|\n)\s*/m, "")
-        @result.should == xml_string
+        expect(burlap).to eq(xml_string)
       end
     end
-    describe "wrapping empty arrays" do
-      before do
-        @bd = Burlap::Hash[{:numbers => []}]
-        @result = @bd.to_burlap
+
+    context "wrapping empty arrays" do
+      let(:burlap_hash) { described_class[{ numbers: [] }] }
+
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
       end
-      it "should return a string" do
-        @result.should be_a_kind_of(String)
-      end
-      it "should be generated properly" do
-        xml_string = <<-EOF
+
+      it "is generated properly" do
+        xml_string = <<-XML
           <map>
             <type></type>
 
@@ -149,11 +225,10 @@ describe Burlap::Hash do
               <length>0</length>
             </list>
           </map>
-        EOF
+        XML
         xml_string.gsub!(/(^|\n)\s*/m, "")
-        @result.should == xml_string
+        expect(burlap).to eq(xml_string)
       end
     end
   end
-
 end

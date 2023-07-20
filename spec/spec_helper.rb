@@ -7,9 +7,7 @@ require "timecop"
 
 require "burlap"
 
-# element_exists_with :selector => "map", :count => 1
-def element_exists_with opts={}
-  elements = @doc.css(opts[:selector])
-  elements.size.should eq(opts[:count])
-  elements
+# Strip newlines & whitespace between tags - burlap is one string
+def format_xml_as_burlap(xml_string)
+  xml_string.gsub!(/(^|\n)\s*/m, "")
 end

@@ -1,102 +1,139 @@
 require "spec_helper"
 
-describe Burlap::DefaultResolver do
+RSpec.describe Burlap::DefaultResolver do
+  subject(:resolver) { described_class.new }
 
   describe "#mappings" do
-    before { @resolver = Burlap::DefaultResolver.new }
-
-    it "should default to a hash" do
-      @resolver.mappings.should == {}
+    it "defaults to a hash" do
+      expect(resolver.mappings).to eq({})
     end
 
-    it "should store a single mapping when passed a name and block" do
-      @resolver.mappings["thing"].should == nil
+    context "when passed a name and block" do
+      it "stores a single mapping" do
+        expect(resolver.mappings["first"]).to be_nil
 
-      @resolver.mappings "thing" do
-        "thing's block"
-      end
+        resolver.mappings("first") do
+          "result of call"
+        end
 
-      @result = @resolver.mappings["thing"]
-      @result.should_not == nil
-      @result.should be_a_kind_of(Proc)
-      @result.call.should == "thing's block"
-    end
+        result = resolver.mappings["first"]
 
-    it "should store the same block against multiple mappings when passed more than one name at once" do
-      @resolver.mappings "black", "white" do
-        # Mixing black and white keys. Geddit?
-        # John Agard does, http://www.intermix.org.uk/poetry/poetry_01_agard.asp
-        "half-caste symphony"
-      end
-
-      %w(black white).each do |key|
-        result = @resolver.mappings[key]
-        result.should_not == nil
-        result.should respond_to(:call)
-        result.call.should == "half-caste symphony"
+        expect(result).not_to be_nil
+        expect(result).to be_a_kind_of(Proc)
+        expect(result.call).to eq("result of call")
       end
     end
 
-    it "should use the last argument if it responds to #call in place of a block"
+    context "when passed more than one name at once" do
+      it "stores the same block against multiple mappings" do
+        resolver.mappings("first", "second") do
+          "result of call"
+        end
+
+        result = resolver.mappings["first"]
+        expect(result).not_to be_nil
+        expect(result).to respond_to(:call)
+        expect(result.call).to eq("result of call")
+
+        result = resolver.mappings["second"]
+        expect(result).not_to be_nil
+        expect(result).to respond_to(:call)
+        expect(result.call).to eq("result of call")
+      end
+    end
   end
 
-  describe "parsing default tags" do
-    before(:all) do
-      @resolver = Burlap.resolver
+  describe ".convert_to_native" do
+    subject(:resolver) { Burlap.resolver }
+
+    context "when input is 'int'" do
+      let(:burlap_tag) { Burlap::BaseTag.new(name: "int", value: "15") }
+
+      it "is parsed into ruby" do
+        expect(resolver.convert_to_native(burlap_tag)).to eq(15)
+      end
     end
 
-    [
-      {:name => "int", :burlap => "15", :expected => 15},
-      {:name => "double", :burlap => "1.5", :expected => 1.5},
-      {:name => "string", :burlap => "some string value", :expected => "some string value"},
-      {:name => "null", :burlap => "", :expected => nil}
-    ].each do |tag|
-      describe tag[:name] do
-        it "should be parsed into ruby" do
-          burlap_tag = Burlap::BaseTag.new(:name => tag[:name], :value => tag[:burlap])
-          @resolver.convert_to_native(burlap_tag).should == tag[:expected]
+    context "when input is 'double" do
+      let(:burlap_tag) { Burlap::BaseTag.new(name: "double", value: "1.5") }
+
+      it "is parsed into ruby" do
+        expect(resolver.convert_to_native(burlap_tag)).to eq(1.5)
+      end
+    end
+
+    context "when input is 'string" do
+      let(:burlap_tag) { Burlap::BaseTag.new(name: "string", value: "some string value") }
+
+      it "is parsed into ruby" do
+        expect(resolver.convert_to_native(burlap_tag)).to eq("some string value")
+      end
+    end
+
+    context "when input is 'null" do
+      let(:burlap_tag) { Burlap::BaseTag.new(name: "null", value: "") }
+
+      it "is parsed into ruby" do
+        expect(resolver.convert_to_native(burlap_tag)).to eq(nil)
+      end
+    end
+
+    context "when input is 'with 'boolean'" do
+      let(:burlap_tag) { Burlap::BaseTag.new(name: "boolean", value: value) }
+
+      context "with true (1)" do
+        let(:value) { "1" }
+
+        it "parses true" do
+          expect(resolver.convert_to_native(burlap_tag)).to be(true)
+        end
+      end
+
+      context "with false (0)" do
+        let(:value) { "0" }
+
+        it "parses false" do
+          expect(resolver.convert_to_native(burlap_tag)).to be(false)
         end
       end
     end
 
-    describe "boolean" do
-      it "should parse true" do
-        true_tag = Burlap::BaseTag.new(:name => "boolean", :value => "1")
-        @resolver.convert_to_native(true_tag).should == true
+    describe ".parse" do
+      subject(:parsed_burlap) { Burlap.parse(burlap) }
+
+      context "with empty array" do
+        let(:burlap) { "<list><type>[java.lang.Integer</type><length>0</length></list>" }
+
+        it "parses an empty array" do
+          expect(parsed_burlap).to eq([])
+        end
       end
 
-      it "should parse false" do
-        false_tag = Burlap::BaseTag.new(:name => "boolean", :value => "0")
-        @resolver.convert_to_native(false_tag).should == false
-      end
-    end
+      context "when single element" do
+        let(:burlap) { "<list><type>[string</type><length>1</length><string>1</string></list>" }
 
-    describe "list" do
-      it "should parse an empty array" do
-        arr = Burlap.parse "<list><type>[java.lang.Integer</type><length>0</length></list>"
-
-        arr.should == []
+        it "parses an array" do
+          expect(parsed_burlap).to eq(["1"])
+        end
       end
 
-      it "should parse an array containing one string" do
-        arr = Burlap.parse "<list><type>[string</type><length>1</length><string>1</string></list>"
+      context "when multiple elements" do
+        let(:burlap) { %{<list><type></type><length>3</length><int>0</int><double>1.3</double><string>foobar</string></list>} }
 
-        arr.should == ["1"]
+        it "parses an array" do
+          expect(parsed_burlap).to eq([0, 1.3, "foobar"])
+        end
       end
 
-      it "should parse an array with multiple elements" do
-        arr = Burlap.parse %{<list><type></type><length>3</length><int>0</int><double>1.3</double><string>foobar</string></list>}
+      context "with 'base64' encoded" do
+        let(:burlap) { "<base64>#{encoded}</base64>" }
+        let(:decoded) { "some string of some text" }
+        let(:encoded) { Base64.encode64(decoded) }
 
-        arr.should == [0, 1.3, "foobar"]
-      end
-    end
-
-    describe "base64" do
-      it "should parse and return as a string" do
-        str = "some string of some text"
-        response = Burlap.parse "<base64>#{Base64.encode64(str)}</base64>"
-        response.should be_a_kind_of(String)
-        response.should == str
+        it "parses and return as a string" do
+          expect(parsed_burlap).to be_a_kind_of(String)
+          expect(parsed_burlap).to eq(decoded)
+        end
       end
     end
   end

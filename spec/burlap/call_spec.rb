@@ -1,84 +1,96 @@
 require "spec_helper"
 
-describe Burlap::Call do
+RSpec.describe Burlap::Call do
+  subject(:caller) { described_class.new(caller_args) }
 
-  before do
-    @valid_params = {:method => "updateUser"}
-  end
+  let(:caller_args) { { method: "updateUser" } }
 
   describe "#headers" do
-    it "should default to an array" do
-      Burlap::Call.new(@valid_params).headers.should == {}
+    it "defaults to an array" do
+      expect(caller.headers).to eq({})
     end
   end
 
   describe "#arguments" do
-    it "should default to a hash" do
-      Burlap::Call.new(@valid_params).arguments.should == []
+    it "defaults to a hash" do
+      expect(caller.arguments).to eq([])
     end
   end
 
   describe "#method" do
-    it "should be required" do
-      lambda { Burlap::Call.new(@valid_params.except(:method)) }.should raise_error(ArgumentError, "method is required")
+    subject(:caller) { described_class.new({}) }
+
+    it "is required" do
+      expect { caller }.to raise_error(ArgumentError, "method is required")
     end
   end
 
   describe "#to_burlap" do
-    before(:all) { Timecop.freeze(Time.local(2010, 9, 11, 10, 0, 0)) }
-    after(:all)  { Timecop.return }
-    describe "single dimensional" do
-      before :all do
-        @call = Burlap::Call.new(:method => "updateUser", :arguments => ["one", 2, 3.0, nil, true, Time.now])
-        @response = @call.to_burlap
+    subject(:burlap) { caller.to_burlap }
+
+    before { Timecop.freeze(Time.local(2010, 9, 11, 10, 0, 0)) }
+
+    after  { Timecop.return }
+
+    context "single dimensional" do
+      let(:caller_args) { { method: "updateUser", arguments: ["one", 2, 3.0, nil, true, Time.now] } }
+
+      it "has a burlap:call root" do
+        expect(burlap).to match(/\A<burlap:call>/)
+        expect(burlap).to match(%r{</burlap:call>\z})
       end
-      it "should have a burlap:call root" do
-        @response.should =~ /\A<burlap:call>/
-        @response.should =~ %r{</burlap:call>\z}
+
+      it "has a method element" do
+        expect(burlap).to match(%r{<method>updateUser</method>})
       end
-      it "should have a method element" do
-        @response.should =~ %r{<method>updateUser</method>}
+
+      it "has a string argument element" do
+        expect(burlap).to match(%r{<string>one</string>})
       end
-      it "should have a string argument element" do
-        @response.should =~ %r{<string>one</string>}
+
+      it "has an int argument element" do
+        expect(burlap).to match(%r{<int>2</int>})
       end
-      it "should have an int argument element" do
-        @response.should =~ %r{<int>2</int>}
+
+      it "has a double argument element" do
+        expect(burlap).to match(%r{<double>3.0</double>})
       end
-      it "should have a double argument element" do
-        @response.should =~ %r{<double>3.0</double>}
+
+      it "has a null argument element" do
+        expect(burlap).to match(%r{<null></null>})
       end
-      it "should have a null argument element" do
-        @response.should =~ %r{<null></null>}
+
+      it "has a boolean argument element" do
+        expect(burlap).to match(%r{<boolean>1</boolean>})
       end
-      it "should have a boolean argument element" do
-        @response.should =~ %r{<boolean>1</boolean>}
-      end
-      it "should have a date argument element" do
-        @response.should =~ %r{<date>#{Regexp.escape(Time.now.burlap_iso8601(3))}</date>}
-      end
-      describe "headers" do
-        it "should generate header key/values"
+
+      it "has a date argument element" do
+        expect(burlap).to match(%r{<date>#{Regexp.escape(Time.now.burlap_iso8601(3))}</date>})
       end
     end
-    describe "multi-dimensional" do
-      before :all do
-        contact = Burlap::Hash[[
-          ["number", 101],
-          ["street", "auckland road"],
-          ["town", "elizabethtown"],
-          ["country", "finland"],
-          ["foreign", true]
-        ], "burlap.user"]
-        @call = Burlap::Call.new(:method => "updateUser", :arguments => ["one", contact])
-        @result = @call.to_burlap
+
+    context "multi-dimensional" do
+      let(:caller_args) { { method: "updateUser", arguments: ["one", contact] } }
+      let(:contact) do
+        Burlap::Hash[
+          [
+            ["number", 101],
+            ["street", "auckland road"],
+            %w[town elizabethtown],
+            %w[country finland],
+            ["foreign", true]
+          ],
+          "burlap.user"
+        ]
       end
-      it "should return a string" do
-        @result.should be_a_kind_of(String)
+
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
       end
-      it "should generate the right burlap" do
-        # todo: add headers
-        xml_string = <<-EOF
+
+      it "generates the right burlap" do
+        # TODO: add headers
+        xml_string = <<-XML
           <burlap:call>
             <method>updateUser</method>
 
@@ -104,11 +116,11 @@ describe Burlap::Call do
             </map>
 
           </burlap:call>
-        EOF
-        xml_string.gsub!(/(^|\n)\s*/m, "")
-        @result.should == xml_string
+        XML
+
+        format_xml_as_burlap(xml_string)
+        expect(burlap).to eq(xml_string)
       end
     end
   end
-
 end

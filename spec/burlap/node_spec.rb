@@ -1,35 +1,39 @@
-# coding: utf-8
 require "spec_helper"
 
-describe Burlap::Node do
-
+RSpec.describe Burlap::Node do
   describe "#to_burlap" do
-    describe "with a string" do
-      before :all do
-        @result = Burlap::Node.new(:name => "method", :value => "updateUser").to_burlap
+    subject(:burlap) { described_class.new(name: "name", value: value).to_burlap }
+
+    context "with a string" do
+      let(:value) { "updateUser" }
+
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
       end
-      it "should return a string" do
-        @result.should be_a_kind_of(String)
-      end
-      it "should put name in brackets" do
-        @result.should == "<method>updateUser</method>"
-      end
-      it "should use decimal escaping for utf8 characters" do
-        result = Burlap::Node.new(:name => "method", :value => "Håva").to_burlap
-        result.should == %{<method>H&#229;va</method>}
+
+      it "puts name in brackets" do
+        expect(burlap).to eq("<name>updateUser</name>")
       end
     end
-    describe "with nested XML" do
-      before :all do
-        @result = Burlap::Node.new(:name => "list", :value => "<length>1</length>").to_burlap
+
+    context "with UTF8 characters" do
+      let(:value) { "Håva" }
+
+      it "uses decimal escaping for utf8 characters" do
+        expect(burlap).to eq(%{<name>H&#229;va</name>})
       end
-      it "should return a string" do
-        @result.should be_a_kind_of(String)
+    end
+
+    context "with nested XML" do
+      let(:value) { "<length>1</length>" }
+
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
       end
-      it "should not escape the value containing XML" do
-        @result.should == "<list><length>1</length></list>"
+
+      it "does not escape the value containing XML" do
+        expect(burlap).to eq("<name><length>1</length></name>")
       end
     end
   end
-
 end

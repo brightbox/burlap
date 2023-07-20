@@ -1,46 +1,122 @@
 require "spec_helper"
 
-describe Array do
+RSpec.describe Array do
   describe "#to_burlap" do
-    [
-      [],
-      [:one],
-      [:one, "two"],
-      [:one, "two", 3]
-    ].each do |arr|
-      describe "with #{arr.size} elements" do
-        describe "generating string" do
-          before do
-            @burlap = arr.to_burlap
-          end
-          it "should return a string" do
-            @burlap.should be_a_kind_of(String)
-          end
-          it "should have a list root" do
-            @burlap.should =~ /^<list>/
-            @burlap.should =~ %r{</list>$}
-          end
-          it "should have a type element" do
-            @burlap.should =~ %r{<type></type>}
-          end
-          it "should have a length element" do
-            @burlap.should =~ %r{<length>#{arr.size}</length>}
-          end
-        end
-        it "should create a Burlap::Array instance from itself and delegate #to_burlap to it" do
-          @array = arr
+    subject(:burlap) { array.to_burlap }
 
-          mock_burlap_array = double(Burlap::Array)
-          if @array.empty?
-            Burlap::Array.should_receive(:[]).with(no_args).and_return(mock_burlap_array)
-          else
-            Burlap::Array.should_receive(:[]).with(*@array).and_return(mock_burlap_array)
-          end
+    context "with 0 elements" do
+      let(:array) { [] }
 
-          mock_burlap_array.should_receive(:to_burlap).and_return("<burlap>array</burlap>")
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
+      end
 
-          @array.to_burlap.should == "<burlap>array</burlap>"
-        end
+      it "has a list root" do
+        expect(burlap).to match(/^<list>/)
+        expect(burlap).to match(%r{</list>$})
+      end
+
+      it "has a type element" do
+        expect(burlap).to match(%r{<type></type>})
+      end
+
+      it "has a length element" do
+        expect(burlap).to match(%r{<length>#{array.size}</length>})
+      end
+
+      it "creates a Burlap::Array instance from itself and delegate #to_burlap to it" do
+        mock_burlap_array = instance_double(Burlap::Array)
+        expect(Burlap::Array).to receive(:[]).with(no_args).and_return(mock_burlap_array)
+        expect(mock_burlap_array).to receive(:to_burlap).and_return("<burlap>array</burlap>")
+
+        expect(array.to_burlap).to eq("<burlap>array</burlap>")
+      end
+    end
+
+    context "with 1 element" do
+      let(:array) { [:one] }
+
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
+      end
+
+      it "has a list root" do
+        expect(burlap).to match(/^<list>/)
+        expect(burlap).to match(%r{</list>$})
+      end
+
+      it "has a type element" do
+        expect(burlap).to match(%r{<type></type>})
+      end
+
+      it "has a length element" do
+        expect(burlap).to match(%r{<length>#{array.size}</length>})
+      end
+
+      it "creates a Burlap::Array instance from itself and delegate #to_burlap to it" do
+        mock_burlap_array = instance_double(Burlap::Array)
+        expect(Burlap::Array).to receive(:[]).with(*array).and_return(mock_burlap_array)
+        expect(mock_burlap_array).to receive(:to_burlap).and_return("<burlap>array</burlap>")
+
+        expect(array.to_burlap).to eq("<burlap>array</burlap>")
+      end
+    end
+
+    context "with 2 elements" do
+      let(:array) { [:one, "two"] }
+
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
+      end
+
+      it "has a list root" do
+        expect(burlap).to match(/^<list>/)
+        expect(burlap).to match(%r{</list>$})
+      end
+
+      it "has a type element" do
+        expect(burlap).to match(%r{<type></type>})
+      end
+
+      it "has a length element" do
+        expect(burlap).to match(%r{<length>#{array.size}</length>})
+      end
+
+      it "creates a Burlap::Array instance from itself and delegate #to_burlap to it" do
+        mock_burlap_array = instance_double(Burlap::Array)
+        expect(Burlap::Array).to receive(:[]).with(*array).and_return(mock_burlap_array)
+        expect(mock_burlap_array).to receive(:to_burlap).and_return("<burlap>array</burlap>")
+
+        expect(array.to_burlap).to eq("<burlap>array</burlap>")
+      end
+    end
+
+    context "with 3 elements" do
+      let(:array) { [:one, "two", 3] }
+
+      it "returns a string" do
+        expect(burlap).to be_a_kind_of(String)
+      end
+
+      it "has a list root" do
+        expect(burlap).to match(/^<list>/)
+        expect(burlap).to match(%r{</list>$})
+      end
+
+      it "has a type element" do
+        expect(burlap).to match(%r{<type></type>})
+      end
+
+      it "has a length element" do
+        expect(burlap).to match(%r{<length>#{array.size}</length>})
+      end
+
+      it "creates a Burlap::Array instance from itself and delegate #to_burlap to it" do
+        mock_burlap_array = instance_double(Burlap::Array)
+        expect(Burlap::Array).to receive(:[]).with(*array).and_return(mock_burlap_array)
+        expect(mock_burlap_array).to receive(:to_burlap).and_return("<burlap>array</burlap>")
+
+        expect(array.to_burlap).to eq("<burlap>array</burlap>")
       end
     end
   end
